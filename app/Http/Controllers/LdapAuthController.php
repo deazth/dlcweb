@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\LoginAccess;
+use App\EuctBc;
+use App\EuctAdmin;
 
 class LdapAuthController extends BaseController
 {
@@ -18,8 +21,8 @@ class LdapAuthController extends BaseController
 		// first, validate the input
 		$input = app('request')->all();
 		$rules = [
-			'username' => ['required'],
-			'password' => ['required']
+			'STAFF_ID' => ['required'],
+			'PASSWORD' => ['required']
 		];
 
 		$validator = app('validator')->make($input, $rules);
@@ -27,8 +30,8 @@ class LdapAuthController extends BaseController
 			return $this->respond_json(412, 'Invalid input', $input);
 		}
 
-		$username = $req->username;
-		$password = $req->password;
+		$username = $req->STAFF_ID;
+		$password = $req->PASSWORD;
 
 		// do the ldap things
 		$errm = 'success';
@@ -47,6 +50,13 @@ class LdapAuthController extends BaseController
 				try{
 				if (ldap_bind($con,$udn, $password)){
 					$errm = 'success';
+
+					// insert into login access table
+					$loginacc = new LoginAccess;
+					$loginacc->STAFF_ID = $username;
+					$loginacc->FROM_IP = request()->ip();
+					$loginacc->save();
+
 				} else {
 					$errorcode = 401;
 					$errm = 'Invalid credentials.';
@@ -66,6 +76,10 @@ class LdapAuthController extends BaseController
 		} else {
 			$errorcode = 500;
 			$errm = "Unable to connect to $hostnameSSL";
+		}
+
+		if($errorcode == 200){
+			return $this->fetchUser($username, 'id');
 		}
 
 		return $this->respond_json($errorcode, $errm);
@@ -107,11 +121,28 @@ class LdapAuthController extends BaseController
 
 					// perform the search
 					$ldres = ldap_search($con, 'ou=users,o=data', "$stype=$username");
-					$retdata = ldap_get_entries($con, $ldres);
+					$ldapdata = ldap_get_entries($con, $ldres);
 
-					if($retdata['count'] == 0){
+					if($ldapdata['count'] == 0){
 						$errorcode = 404;
 						$errm = 'user not found';
+					} else {
+						$costcenter = $ldapdata['0']['ppcostcenter']['0'];
+						$bcname = findBC($costcenter);
+						$role = getRole($username);
+
+						$retdata = [
+							'STAFF_ID' => $ldapdata['0']['cn']['0'],
+							'NAME' => $ldapdata['0']['fullname']['0'],
+							'UNIT' => $ldapdata['0']['pporgunitdesc']['0'],
+							'DEPARTMENT' => $ldapdata['0']['departmentnumber']['0'],
+							'COST_CENTER' => $costcenter,
+							'BC_NAME' => $bcname,
+							'ROLE' => $role,
+							'NIRC' => $ldapdata['0']['ppnewic']['0'],
+							'EMAIL' => $ldapdata['0']['mail']['0'],
+							'MOBILE_NO' => $ldapdata['0']['mobile']['0']
+						];
 					}
 
 				} else {
@@ -138,6 +169,14 @@ class LdapAuthController extends BaseController
 		return $this->respond_json($errorcode, $errm, $retdata);
 	}
 
+	function findBC($costcenter){
+		$eubc =
+	}
+
+	function getRole($username){
+
+	}
+
 	// to be called by API
 	function getUserInfo(Request $req){
 		// first, validate the input
@@ -158,7 +197,6 @@ class LdapAuthController extends BaseController
 
 	function authcon(Request $req){
 
-		$input = app('request')->all();
-		return $input;
+		return request()->ip();
 	}
 }

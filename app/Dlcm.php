@@ -1,0 +1,13 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Dlcm extends Model
+{
+
+
+    public $timestamps = false;
+    protected $table = 'DLCM_FULL';
+}

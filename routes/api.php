@@ -1,15 +1,29 @@
 <?php
 
-$api = app('Dingo\Api\Routing\Router');
+use Illuminate\Http\Request;
 
-$api->version('v1', function ($api) {
-  $api->post('getuserinfo', 'App\Http\Controllers\LdapAuthController@getUserInfo');
-  $api->post('dologin', 'App\Http\Controllers\LdapAuthController@doLogin');
-  $api->post('authcon', 'App\Http\Controllers\LdapAuthController@authcon');
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
 
-  // user related
-  
-
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
 });
 
-// Route::post('authcon', 'LdapAuthController@authcon');
+Route::get('login', function() {
+	return 'lala';
+});
+
+// Authentication related APIs
+Route::post('authcon', 'LdapAuthController@authcon');
+Route::post('getuserinfo', 'LdapAuthController@getUserInfo');
+Route::post('LoginApi', 'LdapAuthController@doLogin');
+
+// User activities
