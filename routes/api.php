@@ -23,7 +23,7 @@ Route::get('login', function() {
 
 // Authentication related APIs
 Route::post('authcon', 'LdapAuthController@authcon');
-Route::post('getuserinfo', 'LdapAuthController@getUserInfo');
-Route::post('LoginApi', 'LdapAuthController@doLogin');
+Route::get('getuserinfo', 'LdapAuthController@getUserInfo');
+Route::get('LoginApi', 'LdapAuthController@doLogin');
 
 // User activities
