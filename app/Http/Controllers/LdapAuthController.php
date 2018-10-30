@@ -128,8 +128,8 @@ class LdapAuthController extends BaseController
 						$errm = 'user not found';
 					} else {
 						$costcenter = $ldapdata['0']['ppcostcenter']['0'];
-						$bcname = findBC($costcenter);
-						$role = getRole($username);
+						$bcname = $this->findBC($costcenter);
+						$role = $this->getRole($username);
 
 						$retdata = [
 							'STAFF_ID' => $ldapdata['0']['cn']['0'],
@@ -170,10 +170,33 @@ class LdapAuthController extends BaseController
 	}
 
 	function findBC($costcenter){
-		$eubc =
+		$eubc = EuctBc::where('COST_CENTER',$costcenter);
+
+		if($eubc->first()){
+			return $eubc->BC_STAFF_NAME;
+		} else {
+			return '';
+		}
+
 	}
 
 	function getRole($username){
+		// first check if this user is an admin
+		$eucadmin = EuctAdmin::where('STAFF_ID', $username);
+
+		if($eucadmin->first()){
+			return 'ADMIN';
+		} else {
+			// not an admin
+			// check if it's a BC
+			$eubc = EuctBc::where('BC_STAFF_ID', $username);
+
+			if($eubc->first()){
+				return 'BC';
+			} else {
+				return 'USER';
+			}
+		}
 
 	}
 
