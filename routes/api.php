@@ -33,6 +33,10 @@ Route::get('FindDeviceBySerial', 'DeviceController@FindDeviceBySerialApi');
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+
+    $api->get('/', ['uses' => 'App\Http\Controllers\BaseController@returnIndex']);
+
+
     $api->get('/authcon', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@authcon']);
     $api->get('/getuserinfo', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@getUserInfo']);
     $api->get('/LoginApi', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@doLogin']);

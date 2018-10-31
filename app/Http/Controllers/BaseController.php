@@ -26,4 +26,16 @@ class BaseController extends Controller
 
 	}
 
+	function returnIndex(){
+		$response = [
+			'title' => env('API_NAME'),
+			'api-version' => env('API_VERSION'),
+			'lumen-version' => app()->version(),
+			'author' => env('API_AUTHOR'),
+			'created' => '2018-10-14',
+			'updated' => '2018-10-31',
+		];
+		return response()->json($response);
+	}
+
 }
