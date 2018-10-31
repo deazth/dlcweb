@@ -11,10 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+/*
+$app->get('/', function () use ($app) {
+	$response = [
+		'title' => env('API_NAME'),
+		'api-version' => env('API_VERSION'),
+		'lumen-version' => app()->version(),
+		'author' => env('API_AUTHOR'),
+		'created' => '2017-08-29 12:01',
+		'updated' => '2017-09-12 12:36',
+	];
+	return response()->json($response);
 });
-
-Route::get('/login', function () {
-    return 'web login';
-});
+*/
