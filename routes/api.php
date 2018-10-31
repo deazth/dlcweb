@@ -27,3 +27,4 @@ Route::get('getuserinfo', 'LdapAuthController@getUserInfo');
 Route::get('LoginApi', 'LdapAuthController@doLogin');
 
 // User activities
+Route::get('FindDeviceBySerial', 'DeviceController@FindDeviceBySerialApi');
