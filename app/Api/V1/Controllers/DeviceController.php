@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers;
 
 use Illuminate\Http\Request;
 use App\Dlcm;
 
-class DeviceController extends BaseController
+class DeviceController extends Controller
 {
     // functions to be called as Api
 

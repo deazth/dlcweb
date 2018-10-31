@@ -51,5 +51,15 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
-
+/*
+$app['Dingo\Api\Exception\Handler']->setErrorFormat([
+    'error' => [
+        'message' => ':message',
+        'errors' => ':errors',
+        'code' => ':code',
+        'status_code' => ':status_code',
+        'debug' => ':debug'
+    ]
+]);
+*/
 return $app;

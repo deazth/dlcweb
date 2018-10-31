@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers;
 
 use Illuminate\Http\Request;
 use App\LoginAccess;
 use App\EuctBc;
 use App\EuctAdmin;
 
-class LdapAuthController extends BaseController
+class LdapAuthController extends Controller
 {
 
 	/**
