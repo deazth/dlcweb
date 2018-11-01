@@ -3,6 +3,7 @@ namespace App\Api\V1\Controllers;
 
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Routing\Controller as BaseController;
+use App\EuctSequence;
 
 class Controller extends BaseController
 {
@@ -24,4 +25,9 @@ class Controller extends BaseController
 		return $retval;
 
 	}
+
+  function getNextSequence($type){
+
+  }
+
 }

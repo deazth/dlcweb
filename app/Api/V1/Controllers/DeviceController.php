@@ -36,24 +36,6 @@ class DeviceController extends Controller
 
     }
 
-    function SubmitOrderApi(Request $req){
-      $errm = 'success';
-      $errorcode = 200;
-
-      // first, validate the input
-  		$input = app('request')->all();
-  		$rules = [
-  			'STAFF_ID' => ['required']
-  		];
-
-  		$validator = app('validator')->make($input, $rules);
-  		if($validator->fails()){
-  			return $this->respond_json(412, 'Invalid input', $input);
-  		}
-
-  		$username = $req->STAFF_ID;
-
-    }
 
     function FindDeviceBySerialApi(Request $req){
       $errm = 'success';
