@@ -185,17 +185,9 @@ class LdapAuthController extends Controller
 		$eucadmin = EuctAdmin::where('STAFF_ID', $username);
 
 		if($eucadmin->first()){
-			return 'ADMIN';
+			return $eucadmin->ROLE_TYPE;
 		} else {
-			// not an admin
-			// check if it's a BC
-			$eubc = EuctBc::where('BC_STAFF_ID', $username);
-
-			if($eubc->first()){
-				return 'BC';
-			} else {
-				return 'USER';
-			}
+			return 'USER';
 		}
 
 	}
