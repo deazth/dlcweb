@@ -18,6 +18,7 @@ class CreateEuctSequencesTable extends Migration
             $table->timestamps();
             $table->string('type', 20);
             $table->integer('curnum');
+            $table->integer('numlen');
             $table->string('prefix', 5);
         });
     }
