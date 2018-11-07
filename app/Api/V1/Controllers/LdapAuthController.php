@@ -4,8 +4,6 @@ namespace App\Api\V1\Controllers;
 
 use Illuminate\Http\Request;
 use App\LoginAccess;
-use App\EuctBc;
-use App\EuctAdmin;
 
 class LdapAuthController extends Controller
 {
@@ -128,11 +126,13 @@ class LdapAuthController extends Controller
 						$errm = 'user not found';
 					} else {
 						$costcenter = $ldapdata['0']['ppcostcenter']['0'];
+						$stid = $ldapdata['0']['cn']['0'];
 						$bcname = $this->findBC($costcenter);
-						$role = $this->getRole($username);
+						$role = $this->getRole($stid);
+
 
 						$retdata = [
-							'STAFF_ID' => $ldapdata['0']['cn']['0'],
+							'STAFF_ID' => $stid,
 							'NAME' => $ldapdata['0']['fullname']['0'],
 							'UNIT' => $ldapdata['0']['pporgunitdesc']['0'],
 							'DEPARTMENT' => $ldapdata['0']['departmentnumber']['0'],
@@ -143,6 +143,8 @@ class LdapAuthController extends Controller
 							'EMAIL' => $ldapdata['0']['mail']['0'],
 							'MOBILE_NO' => $ldapdata['0']['mobile']['0']
 						];
+
+						//$retdata = $ldapdata;
 					}
 
 				} else {
@@ -167,29 +169,6 @@ class LdapAuthController extends Controller
 		}
 
 		return $this->respond_json($errorcode, $errm, $retdata);
-	}
-
-	function findBC($costcenter){
-		$eubc = EuctBc::where('COST_CENTER',$costcenter);
-
-		if($eubc->first()){
-			return $eubc->BC_STAFF_NAME;
-		} else {
-			return '';
-		}
-
-	}
-
-	function getRole($username){
-		// first check if this user is an admin
-		$eucadmin = EuctAdmin::where('STAFF_ID', $username);
-
-		if($eucadmin->first()){
-			return $eucadmin->ROLE_TYPE;
-		} else {
-			return 'USER';
-		}
-
 	}
 
 	// to be called by API

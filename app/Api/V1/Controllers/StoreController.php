@@ -33,6 +33,9 @@ class StoreController extends Controller
     $serialno = $req->SERIAL_NUMBER;
     $categ = $req->CATEGORY;
 
+    // first, check the role of this staff
+    $role = $this->getRole($staffid);
+
 
     return $this->respond_json(200, 'OK', $devices);
 
