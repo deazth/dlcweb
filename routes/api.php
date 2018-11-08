@@ -36,10 +36,16 @@ $api->version('v1', function ($api) {
 
     $api->get('/', ['uses' => 'App\Http\Controllers\BaseController@returnIndex']);
 
-
+    // auth APIs
     $api->get('/authcon', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@authcon']);
     $api->get('/getuserinfo', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@getUserInfo']);
     $api->get('/LoginApi', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@doLogin']);
 
+    // Device APIs
     $api->get('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
+    $api->get('/QueryAllDeviceAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevice']);
+
+    // Store APIs
+    $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);
+    $api->post('/AddStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@AddStoreAPI']);
 });

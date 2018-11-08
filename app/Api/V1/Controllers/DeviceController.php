@@ -63,7 +63,17 @@ class DeviceController extends Controller
 
     }
 
+    function queryAllDevice() {
+      $aplcm = Plcm::all();
+      $adlcm = Dlcm::all();
 
+      $ret = [
+        'DLCM' => $adlcm,
+        'PLCM' => $aplcm
+      ];
+
+      return $this->respond_json(200, 'OK', $ret);
+    }
 
 
 
@@ -118,4 +128,6 @@ class DeviceController extends Controller
 
       return $res;
     }
+
+
 }
