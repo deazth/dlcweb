@@ -62,9 +62,9 @@ class Controller extends BaseController
   }
 
   function findBC($costcenter){
-		$eubc = EuctBc::where('COST_CENTER',$costcenter);
+		$eubc = EuctBc::where('COST_CENTER',$costcenter)->first();
 
-		if($eubc->first()){
+		if($eubc){
 			return $eubc->BC_STAFF_NAME;
 		} else {
 			return '';
