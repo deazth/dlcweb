@@ -106,6 +106,8 @@ class LdapAuthController extends Controller
 		$stype = 'cn';
 		if(strcasecmp($searchtype,'name') == 0){
 			$stype = 'sn';
+		} else if(strcasecmp($searchtype,'mail') == 0){
+			$stype = 'mail';
 		}
 
 		$con =  ldap_connect($hostnameSSL);

@@ -43,7 +43,8 @@ $api->version('v1', function ($api) {
 
     // Device APIs
     $api->get('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
-    $api->get('/QueryAllDeviceAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevice']);
+    $api->get('/QueryAllDeviceDlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDeviceDlcm']);
+    $api->get('/QueryAllDevicePlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevicePlcm']);
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);

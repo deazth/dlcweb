@@ -63,16 +63,32 @@ class DeviceController extends Controller
 
     }
 
-    function queryAllDevice() {
-      $aplcm = Plcm::all();
-      $adlcm = Dlcm::all();
+    function queryAllDeviceDlcm() {
+      // $aplcm = Plcm::all();
+      $adlcm = Dlcm::paginate(200);
 
+/*
       $ret = [
-        'DLCM' => $adlcm,
-        'PLCM' => $aplcm
+        'DLCM' => $this->findDlcmDevice('ALL', '') ,
+        'PLCM' => $this->findPlcmDevice('ALL', '')
       ];
+*/
 
-      return $this->respond_json(200, 'OK', $ret);
+      return $this->respond_json(200, 'OK', $adlcm);
+    }
+
+    function queryAllDevicePlcm() {
+      // $aplcm = Plcm::all();
+      $adlcm = Plcm::paginate(200);
+
+/*
+      $ret = [
+        'DLCM' => $this->findDlcmDevice('ALL', '') ,
+        'PLCM' => $this->findPlcmDevice('ALL', '')
+      ];
+*/
+
+      return $this->respond_json(200, 'OK', $adlcm);
     }
 
 
@@ -82,8 +98,13 @@ class DeviceController extends Controller
     function findDlcmDevice($fieldfilter, $searchno){
       $res = [];
 
-      $sdata = Dlcm::where($fieldfilter, $searchno)->get();
+      if(strcasecmp($fieldfilter, 'ALL') == 0){
+        // $sdata = Dlcm::all();
+      } else {
+        $sdata = Dlcm::where($fieldfilter, $searchno)->get();
+      }
 
+/*
       foreach($sdata as $ddata){
         $arrd = [
           'TAG_NO' => $ddata->TAG_NO,
@@ -95,19 +116,24 @@ class DeviceController extends Controller
           'MODEL' => $ddata->DESCRIPTION,
           'EXPIRY_DATE' => $ddata->EXPIRE_DATE,
           'STATUS' => $ddata->ACTUAL_STATUS,
+          'EMAIL' => $ddata->END_USER_EMAIL,
         ];
 
         array_push($res, $arrd);
 
       }
-
+*/
       return $res;
     }
 
     function findPlcmDevice($fieldfilter, $searchno){
       $res = [];
 
-      $sdata = Plcm::where($fieldfilter, $searchno)->get();
+      if(strcasecmp($fieldfilter, 'ALL') == 0){
+        $sdata = Plcm::all();
+      } else {
+        $sdata = Plcm::where($fieldfilter, $searchno)->get();
+      }
 
       foreach($sdata as $ddata){
         $arrd = [
