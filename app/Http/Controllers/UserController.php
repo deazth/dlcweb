@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 
-class UserController extends BaseController
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -54,7 +54,7 @@ class UserController extends BaseController
         return $this->respond_json(412, 'Invalid input', $input);
       }
 
-      
+
 
     }
 

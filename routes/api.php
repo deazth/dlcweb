@@ -39,10 +39,13 @@ $api->version('v1', function ($api) {
     // auth APIs
     $api->get('/authcon', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@authcon']);
     $api->get('/getuserinfo', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@getUserInfo']);
+    $api->post('/getuserinfo', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@getUserInfo']);
     $api->get('/LoginApi', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@doLogin']);
+    $api->post('/LoginApi', ['uses' => 'App\Api\V1\Controllers\LdapAuthController@doLogin']);
 
     // Device APIs
     $api->get('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
+    $api->post('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
     $api->get('/QueryAllDeviceDlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDeviceDlcm']);
     $api->get('/QueryAllDevicePlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevicePlcm']);
 

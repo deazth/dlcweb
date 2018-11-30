@@ -193,6 +193,6 @@ class LdapAuthController extends Controller
 
 	function authcon(Request $req){
 
-		return $this->findBC('WITF11');
+		return $this->sendEmail();
 	}
 }

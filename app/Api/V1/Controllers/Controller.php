@@ -7,6 +7,9 @@ use App\EuctSequence;
 use App\EuctBc;
 use App\EuctAdmin;
 
+/**
+ * Shared functions will be placed here
+ */
 class Controller extends BaseController
 {
   use Helpers;
@@ -82,6 +85,10 @@ class Controller extends BaseController
 		}
 	}
 
-
+  function sendEmail(){
+    set_error_handler(array($this, 'errorHandler'));
+    mail('mohdamer.ahmad@tm.com.my', 'send from laravel', 'hai world!');
+    return 'Done';
+  }
 
 }
