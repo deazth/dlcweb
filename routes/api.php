@@ -58,7 +58,7 @@ $api->version('v1', function ($api) {
 
     // admin Role
     $api->post('/RoleCreate', ['uses' => 'App\Api\V1\Controllers\RoleController@createRole']);
-    $api->post('/RoleEdit', ['uses' => 'App\Api\VC1\Controllers\RoleController@createRole']);
+    $api->post('/RoleEdit', ['uses' => 'App\Api\V1\Controllers\RoleController@createRole']);
     $api->post('/RoleDelete', ['uses' => 'App\Api\V1\Controllers\RoleController@deleteRole']);
     $api->get('/RoleList', ['uses' => 'App\Api\V1\Controllers\RoleController@listRole']);
 
