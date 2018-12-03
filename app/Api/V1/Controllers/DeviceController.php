@@ -63,6 +63,32 @@ class DeviceController extends Controller
 
     }
 
+    function FindDeviceByStaffApi(Request $req){
+      $errm = 'success';
+      $errorcode = 200;
+
+      // first, validate the input
+  		$input = app('request')->all();
+  		$rules = [
+  			'STAFF_ID' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+  		$devserial = $req->STAFF_ID;
+
+      $devices = [
+        'DLCM' => $this->findDlcmDevice('STAFF_PROJ_ID', $devserial),
+        'PLCM' => $this->findPlcmDevice('STAFF_PROJ_ID', $devserial)
+      ];
+
+      return $this->respond_json(200, 'OK', $devices);
+
+    }
+
     function queryAllDeviceDlcm() {
       // $aplcm = Plcm::all();
       $adlcm = Dlcm::paginate(200);

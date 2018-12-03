@@ -151,4 +151,10 @@ class StoreController extends Controller
 
   }
 
+  function ListStoreAPI(){
+    $allstore = EuctStore::all();
+
+    return $this->respond_json(200, 'OK', $allstore);
+
+  }
 }

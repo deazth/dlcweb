@@ -46,10 +46,26 @@ $api->version('v1', function ($api) {
     // Device APIs
     $api->get('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
     $api->post('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
+    $api->post('/FindDeviceByStaff', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceByStaffApi']);
     $api->get('/QueryAllDeviceDlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDeviceDlcm']);
     $api->get('/QueryAllDevicePlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevicePlcm']);
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);
     $api->post('/AddStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@AddStoreAPI']);
+    $api->get('/ListStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@ListStoreAPI']);
+
+
+    // admin Role
+    $api->post('/RoleCreate', ['uses' => 'App\Api\V1\Controllers\RoleController@createRole']);
+    $api->post('/RoleEdit', ['uses' => 'App\Api\VC1\Controllers\RoleController@createRole']);
+    $api->post('/RoleDelete', ['uses' => 'App\Api\V1\Controllers\RoleController@deleteRole']);
+    $api->get('/RoleList', ['uses' => 'App\Api\V1\Controllers\RoleController@listRole']);
+
+    // BC management
+    $api->post('/BcCreate', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
+    $api->post('/BcEdit', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
+    $api->post('/BcDelete', ['uses' => 'App\Api\V1\Controllers\BcController@deleteBc']);
+    $api->get('/BcList', ['uses' => 'App\Api\V1\Controllers\BcController@listBc']);
+
 });

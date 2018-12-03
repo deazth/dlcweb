@@ -6,6 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class EuctBc extends Model
 {
-  public $timestamps = false;
-  protected $table = 'EUCT_BC';
+    protected $fillable = ['COST_CENTER'];
 }
