@@ -67,5 +67,6 @@ $api->version('v1', function ($api) {
     $api->post('/BcEdit', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
     $api->post('/BcDelete', ['uses' => 'App\Api\V1\Controllers\BcController@deleteBc']);
     $api->get('/BcList', ['uses' => 'App\Api\V1\Controllers\BcController@listBc']);
+    $api->post('/BcGetCC', ['uses' => 'App\Api\V1\Controllers\BcController@listBcCostCenter']);
 
 });

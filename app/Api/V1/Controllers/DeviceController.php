@@ -130,7 +130,7 @@ class DeviceController extends Controller
         $sdata = Dlcm::where($fieldfilter, $searchno)->get();
       }
 
-/*
+
       foreach($sdata as $ddata){
         $arrd = [
           'TAG_NO' => $ddata->TAG_NO,
@@ -148,7 +148,7 @@ class DeviceController extends Controller
         array_push($res, $arrd);
 
       }
-*/
+
       return $res;
     }
 

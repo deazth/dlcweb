@@ -67,4 +67,25 @@ class BcController extends Controller
 
     return $this->respond_json(200, 'OK', $allbc);
   }
+
+  function listBcCostCenter(Request $req){
+    $errm = 'OK';
+    $errorcode = 200;
+
+    // first, validate the input
+    $input = app('request')->all();
+    $rules = [
+      'BC_STAFF_ID' => ['required']
+    ];
+
+    $validator = app('validator')->make($input, $rules);
+    if($validator->fails()){
+      return $this->respond_json(412, 'Invalid input', $input);
+    }
+
+    $euctbc = EuctBc::where('BC_STAFF_ID', $req->BC_STAFF_ID)->get();
+
+    return $this->respond_json($errorcode, $errm, $euctbc);
+
+  }
 }
