@@ -36,6 +36,34 @@ class DeviceController extends Controller
 
     }
 
+    function FindDeviceByKeyApi(Request $req){
+      $errm = 'success';
+      $errorcode = 200;
+
+      // first, validate the input
+  		$input = app('request')->all();
+  		$rules = [
+  			'SEARCH_KEY' => ['required'],
+        'SEARCH_STR' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+  		$searchstr = $req->SEARCH_STR;
+      $searchkey = $req->SEARCH_KEY;
+
+      $devices = [
+        'DLCM' => $this->findDlcmDevice($searchkey, $searchstr),
+        'PLCM' => $this->findPlcmDevice($searchkey, $searchstr)
+      ];
+
+      return $this->respond_json(200, 'OK', $devices);
+
+    }
+
 
     function FindDeviceBySerialApi(Request $req){
       $errm = 'success';

@@ -46,6 +46,7 @@ $api->version('v1', function ($api) {
     // Device APIs
     $api->get('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
     $api->post('/FindDeviceBySerial', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceBySerialApi']);
+    $api->post('/FindDeviceByKey', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceByKeyApi']);
     $api->post('/FindDeviceByStaff', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceByStaffApi']);
     $api->get('/QueryAllDeviceDlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDeviceDlcm']);
     $api->get('/QueryAllDevicePlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevicePlcm']);
