@@ -44,7 +44,8 @@ class DeviceController extends Controller
   		$input = app('request')->all();
   		$rules = [
   			'SEARCH_KEY' => ['required'],
-        'SEARCH_STR' => ['required']
+        'SEARCH_STR' => ['required'],
+        'DEVICE_TYPE' => ['required']
   		];
 
   		$validator = app('validator')->make($input, $rules);
@@ -54,11 +55,17 @@ class DeviceController extends Controller
 
   		$searchstr = $req->SEARCH_STR;
       $searchkey = $req->SEARCH_KEY;
+      $dtype = $req->DEVICE_TYPE;
 
-      $devices = [
-        'DLCM' => $this->findDlcmDevice($searchkey, $searchstr),
-        'PLCM' => $this->findPlcmDevice($searchkey, $searchstr)
-      ];
+      if($dtype == 'DLCM' ){
+        $devices = [
+          'DLCM' => $this->findDlcmDevice($searchkey, $searchstr)
+        ];
+      } else {
+        $devices = [
+          'PLCM' => $this->findPlcmDevice($searchkey, $searchstr)
+        ];
+      }
 
       return $this->respond_json(200, 'OK', $devices);
 
