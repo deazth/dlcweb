@@ -5,6 +5,8 @@ namespace App\Api\V1\Controllers;
 use Illuminate\Http\Request;
 use App\Dlcm;
 use App\Plcm;
+use \DateTime;
+use \DateTimeZone;
 
 class DeviceController extends Controller
 {
@@ -152,6 +154,107 @@ class DeviceController extends Controller
       return $this->respond_json(200, 'OK', $adlcm);
     }
 
+    function checkDeviceWarranty(Request $req){
+      // first, validate the input
+  		$input = app('request')->all();
+  		$rules = [
+  			'DEVICE_ID' => ['required'],
+        'DEVICE_TYPE' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+  		$devid = $req->DEVICE_ID;
+      $devtype= $req->DEVICE_TYPE;
+
+      if($devtype == 'DLCM' ){
+        $thedevice = Dlcm::findOrFail($devid);
+      } else {
+        $thedevice = Plcm::findOrFail($devid);
+      }
+
+      // get the COA
+      $coadate = DateTime::createFromFormat('d/m/Y', $thedevice->COA_DATE);
+
+      // compare it with current date to get the year difference
+      $nowdate = new DateTime('NOW');
+  		$nowdate->setTimezone(new DateTimeZone('+0800'));
+      $yeardiff = $coadate->diff($nowdate)->format('%y');
+
+      $warranty = "Y";
+
+      if($yeardiff >= 3){
+        $warranty = "N";
+      }
+
+      $retst = [
+        'COA_DATE' => $thedevice->COA_DATE,
+        'YEAR_DIFF' => $yeardiff,
+        'IN_WARRANTY' => $warranty
+      ];
+
+      return $this->respond_json(200, 'OK', $retst);
+
+    }
+
+    function returnDeviceReq(Request $req){
+
+      // first, validate the input
+  		$input = app('request')->all();
+  		$rules = [
+  			'DEVICE_ID' => ['required'],
+        'DEVICE_TYPE' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+  		$devid = $req->DEVICE_ID;
+      $devtype= $req->DEVICE_TYPE;
+
+      if($devtype == 'DLCM' ){
+        $thedevice = Dlcm::findOrFail($devid);
+      } else {
+        $thedevice = Plcm::findOrFail($devid);
+      }
+
+      // check any open order for this device
+      $openorder = EuctOrder::where([
+        ['DEVICE_TYPE', '=', $devtype],
+        ['DEVICE_ID', '=', $devid],
+        ['STATUS', '<>', 'C']
+      ])->get();
+
+      if($openorder){
+        // got open order. deny
+        return $this->respond_json(409, 'Open order exist', $openorder);
+      }
+
+      // create new order number
+      $ordernum = $this->getNextSequence('TReturn');
+
+      // create the termination order for this device
+      $nuorder = new EuctOrder;
+      $nuorder->ORDER_NO = $ordernum;
+      $nuorder->ORDER_TYPE = 'RETURN';
+      $nuorder->DEVICE_TYPE = $devtype;
+      $nuorder->REQ_STAFF_ID = $ordernum;
+      $nuorder->STATUS = 'AB';
+      $nuorder->ORD_REMARK = '';
+      $nuorder->DEVICE_ID = $devid;
+      $nuorder->save();
+
+      // to do: alert the next person?
+
+      return $this->respond_json(200, 'OK', $nuorder);
+
+    }
+
 
 
     // function to be used internally
@@ -168,6 +271,7 @@ class DeviceController extends Controller
 
       foreach($sdata as $ddata){
         $arrd = [
+          'id' => $ddata->id,
           'TAG_NO' => $ddata->TAG_NO,
           'SERIAL_NO' => $ddata->SERIAL_NO,
           'COST_CENTER' => $ddata->COST_CENTER,
@@ -214,6 +318,15 @@ class DeviceController extends Controller
       }
 
       return $res;
+    }
+
+    function reqTerminateDlcm($did){
+
+
+    }
+
+    function reqTerminatePlcm($did){
+
     }
 
 

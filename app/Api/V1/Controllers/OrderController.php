@@ -3,20 +3,30 @@
 namespace App\Api\V1\Controllers;
 
 use Illuminate\Http\Request;
+use App\EuctUser;
+use App\EuctOrder;
 
 class OrderController extends Controller
 {
+  /*
+list of order statuses:
+C = completed / closed
+DC = Pending device collection
+AB = Pending approval from BC
 
-    function SubmitOrderApi(Request $req){
-      $errm = 'success';
-      $errorcode = 200;
+
+   */
+
+    function updateUserReqForm(Request $req){
 
       // first, validate the input
       $input = app('request')->all();
       $rules = [
         'STAFF_ID' => ['required'],
-        'TAG_NO' => ['required'],
-        'CATEGORY' => ['required']
+        'STAFF_NAME' => ['required'],
+        'COST_CENTER' => ['required'],
+        'OFFICE_ADDR' => ['required'],
+        'CONTACT_NO' => ['required']
       ];
 
       $validator = app('validator')->make($input, $rules);
@@ -24,13 +34,19 @@ class OrderController extends Controller
         return $this->respond_json(412, 'Invalid input', $input);
       }
 
-      $username = $req->STAFF_ID;
+      // find or create this user
+      $cUser = EuctUser::firstOrCreate(['STAFF_ID' => $req->STAFF_ID]);
+      $cUser->STAFF_ID = $req->STAFF_ID;
+      $cUser->STAFF_NAME = $req->STAFF_NAME;
+      $cUser->COST_CENTER = $req->COST_CENTER;
+      $cUser->OFFICE_ADDR = $req->OFFICE_ADDR;
+      $cUser->CONTACT_NO = $req->CONTACT_NO;
+      $cUser->save();
 
+      return $this->respond_json(200, 'User info saved', $cUser);
     }
 
-    function QueryOrderAPI(Request $req){
-      $errm = 'success';
-      $errorcode = 200;
+    function QueryStaffOrderAPI(Request $req){
 
       // first, validate the input
       $input = app('request')->all();
@@ -43,20 +59,19 @@ class OrderController extends Controller
         return $this->respond_json(412, 'Invalid input', $input);
       }
 
-      $username = $req->STAFF_ID;
+      $sorders = EuctOrder::where('REQ_STAFF_ID', $req->STAFF_ID)->get();
+
+      // return the whole order?
+      return $this->respond_json(200, 'List of orders', $sorders);
 
     }
 
-    function BCUpdateOwnerAPI(Request $req){
-      $errm = 'success';
-      $errorcode = 200;
+    function QueryOrderAPI(Request $req){
 
       // first, validate the input
       $input = app('request')->all();
       $rules = [
-        'STAFF_ID' => ['required'],
-        'TAG_NO' => ['required'],
-        'SERIAL_NO' => ['required']
+        'ORDER_NO' => ['required']
       ];
 
       $validator = app('validator')->make($input, $rules);
@@ -64,29 +79,11 @@ class OrderController extends Controller
         return $this->respond_json(412, 'Invalid input', $input);
       }
 
-      $username = $req->STAFF_ID;
+      $sorders = EuctOrder::where('ORDER_NO', $req->ORDER_NO)->get();
+
+      // return the whole order?
+      return $this->respond_json(200, 'List of orders', $sorders);
 
     }
 
-    function DLCMTerminateApprovalAPI(Request $req){
-      $errm = 'success';
-      $errorcode = 200;
-
-      // first, validate the input
-      $input = app('request')->all();
-      $rules = [
-        'ORDER_NO' => ['required'],
-        'TAG_NO' => ['required'],
-        'ACTION' => ['required'],
-        'REMARKS' => ['required']
-      ];
-
-      $validator = app('validator')->make($input, $rules);
-      if($validator->fails()){
-        return $this->respond_json(412, 'Invalid input', $input);
-      }
-
-      $username = $req->STAFF_ID;
-
-    }
 }

@@ -18,7 +18,8 @@ class CreateEuctOrdersTable extends Migration
             $table->timestamps();
             $table->string('ORDER_NO', 15);
             $table->string('ORDER_TYPE', 20);
-            $table->string('TAG_NO', 20);
+            $table->integer('DEVICE_ID');
+            $table->string('DEVICE_TYPE', 10);
             $table->string('REQ_STAFF_ID', 10);
             $table->string('STATUS', 10);
             $table->string('ORD_REMARK', 300);

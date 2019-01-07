@@ -34,7 +34,7 @@ class Controller extends BaseController
   function getNextSequence($type){
     // set the default values
     $curnum = 1;
-    $pref = substr($type, 0, 1);
+    $pref = substr($type, 0, 2);
     $len = 6;
 
     // find the sequence
@@ -90,5 +90,7 @@ class Controller extends BaseController
     mail('mohdamer.ahmad@tm.com.my', 'send from laravel', 'hai world!');
     return 'Done';
   }
+
+
 
 }

@@ -50,6 +50,8 @@ $api->version('v1', function ($api) {
     $api->post('/FindDeviceByStaff', ['uses' => 'App\Api\V1\Controllers\DeviceController@FindDeviceByStaffApi']);
     $api->get('/QueryAllDeviceDlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDeviceDlcm']);
     $api->get('/QueryAllDevicePlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevicePlcm']);
+    $api->POST('/CheckDeviceWarranty', ['uses' => 'App\Api\V1\Controllers\DeviceController@checkDeviceWarranty']);
+    $api->POST('/ReturnDeviceReq', ['uses' => 'App\Api\V1\Controllers\DeviceController@returnDeviceReq']);
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);
@@ -69,5 +71,10 @@ $api->version('v1', function ($api) {
     $api->post('/BcDelete', ['uses' => 'App\Api\V1\Controllers\BcController@deleteBc']);
     $api->get('/BcList', ['uses' => 'App\Api\V1\Controllers\BcController@listBc']);
     $api->post('/BcGetCC', ['uses' => 'App\Api\V1\Controllers\BcController@listBcCostCenter']);
+
+    // Order APIs
+    $api->post('/OrderUpdateUserForm', ['uses' => 'App\Api\V1\Controllers\OrderController@updateUserReqForm']);
+    $api->post('/QueryStaffOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryStaffOrderAPI']);
+    $api->post('/QueryOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryOrderAPI']);
 
 });

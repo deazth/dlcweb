@@ -4,6 +4,8 @@ namespace App\Api\V1\Controllers;
 
 use Illuminate\Http\Request;
 use App\LoginAccess;
+use \DateTime;
+use \DateTimeZone;
 
 class LdapAuthController extends Controller
 {
@@ -193,6 +195,10 @@ class LdapAuthController extends Controller
 
 	function authcon(Request $req){
 
-		return $this->sendEmail();
+		$convdate = $this->getNextSequence('Order');
+
+
+		return $convdate;
+
 	}
 }
