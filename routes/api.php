@@ -76,5 +76,8 @@ $api->version('v1', function ($api) {
     $api->post('/OrderUpdateUserForm', ['uses' => 'App\Api\V1\Controllers\OrderController@updateUserReqForm']);
     $api->post('/QueryStaffOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryStaffOrderAPI']);
     $api->post('/QueryOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryOrderAPI']);
+    $api->post('/OrderPendingBC', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderPendingBC']);
+    $api->post('/OrderApproveBC', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderApproveBC']);
+    $api->post('/OrderCollectDevice', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderCollectDevice']);
 
 });

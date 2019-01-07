@@ -5,6 +5,7 @@ namespace App\Api\V1\Controllers;
 use Illuminate\Http\Request;
 use App\Dlcm;
 use App\Plcm;
+use App\EuctOrder;
 use \DateTime;
 use \DateTimeZone;
 
@@ -227,10 +228,13 @@ class DeviceController extends Controller
       $openorder = EuctOrder::where([
         ['DEVICE_TYPE', '=', $devtype],
         ['DEVICE_ID', '=', $devid],
-        ['STATUS', '<>', 'C']
-      ])->get();
+        ['STATUS', '!=', 'C']
+      ])->first();
 
-      if($openorder){
+
+      if(empty($openorder)){
+
+      } else {
         // got open order. deny
         return $this->respond_json(409, 'Open order exist', $openorder);
       }
@@ -243,7 +247,7 @@ class DeviceController extends Controller
       $nuorder->ORDER_NO = $ordernum;
       $nuorder->ORDER_TYPE = 'RETURN';
       $nuorder->DEVICE_TYPE = $devtype;
-      $nuorder->REQ_STAFF_ID = $ordernum;
+      $nuorder->REQ_STAFF_ID = $thedevice->STAFF_PROJ_ID;
       $nuorder->STATUS = 'AB';
       $nuorder->ORD_REMARK = '';
       $nuorder->DEVICE_ID = $devid;

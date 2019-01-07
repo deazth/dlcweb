@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\LoginAccess;
 use \DateTime;
 use \DateTimeZone;
+use Illuminate\Support\Facades\DB;
 
 class LdapAuthController extends Controller
 {
@@ -195,10 +196,16 @@ class LdapAuthController extends Controller
 
 	function authcon(Request $req){
 
-		$convdate = $this->getNextSequence('Order');
+		$pendingorder = DB::table('euct_orders')
+			->select('euct_orders.*')
+			->join('euct_users', 'euct_orders.REQ_STAFF_ID', '=', 'euct_users.STAFF_ID')
+			->join('euct_bcs', 'euct_users.COST_CENTER', '=', 'euct_bcs.COST_CENTER')
+			->where([
+				['euct_bcs.BC_STAFF_ID', '=', 'TM12345'],
+				['euct_orders.STATUS', '=', 'AB']
+			])->get();
 
-
-		return $convdate;
+			return $pendingorder;
 
 	}
 }
