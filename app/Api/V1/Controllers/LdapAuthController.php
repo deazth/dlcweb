@@ -80,6 +80,7 @@ class LdapAuthController extends Controller
 		}
 
 		if($errorcode == 200){
+			$this->logs($username, 'Login', []);
 			return $this->fetchUser($username, 'id');
 		}
 

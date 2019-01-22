@@ -52,6 +52,8 @@ $api->version('v1', function ($api) {
     $api->get('/QueryAllDevicePlcmAPI', ['uses' => 'App\Api\V1\Controllers\DeviceController@queryAllDevicePlcm']);
     $api->POST('/CheckDeviceWarranty', ['uses' => 'App\Api\V1\Controllers\DeviceController@checkDeviceWarranty']);
     $api->POST('/ReturnDeviceReq', ['uses' => 'App\Api\V1\Controllers\DeviceController@returnDeviceReq']);
+    $api->POST('/ListDeviceByBC', ['uses' => 'App\Api\V1\Controllers\DeviceController@listDeviceByBC']);
+    $api->POST('/DeviceChangeOwner', ['uses' => 'App\Api\V1\Controllers\DeviceController@DeviceChangeOwner']);
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);
@@ -65,6 +67,10 @@ $api->version('v1', function ($api) {
     $api->post('/RoleDelete', ['uses' => 'App\Api\V1\Controllers\RoleController@deleteRole']);
     $api->get('/RoleList', ['uses' => 'App\Api\V1\Controllers\RoleController@listRole']);
 
+    $api->post('/OrderAdminApprove', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderAdminApprove']);
+    $api->post('/OrderAdminReject', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderAdminReject']);
+    $api->get('/OrderPendingAD', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingAD']);
+
     // BC management
     $api->post('/BcCreate', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
     $api->post('/BcEdit', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
@@ -76,8 +82,6 @@ $api->version('v1', function ($api) {
     $api->post('/OrderUpdateUserForm', ['uses' => 'App\Api\V1\Controllers\OrderController@updateUserReqForm']);
     $api->post('/QueryStaffOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryStaffOrderAPI']);
     $api->post('/QueryOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryOrderAPI']);
-    $api->post('/OrderPendingBC', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderPendingBC']);
-    $api->post('/OrderApproveBC', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderApproveBC']);
     $api->post('/OrderCollectDevice', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderCollectDevice']);
 
 });

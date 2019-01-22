@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Dlcm;
 use App\Plcm;
 use App\EuctOrder;
+use App\EuctBc;
 use \DateTime;
 use \DateTimeZone;
 
@@ -207,7 +208,8 @@ class DeviceController extends Controller
   		$input = app('request')->all();
   		$rules = [
   			'DEVICE_ID' => ['required'],
-        'DEVICE_TYPE' => ['required']
+        'DEVICE_TYPE' => ['required'],
+        'REMARK' => ['required']
   		];
 
   		$validator = app('validator')->make($input, $rules);
@@ -217,6 +219,7 @@ class DeviceController extends Controller
 
   		$devid = $req->DEVICE_ID;
       $devtype= $req->DEVICE_TYPE;
+
 
       if($devtype == 'DLCM' ){
         $thedevice = Dlcm::findOrFail($devid);
@@ -248,15 +251,120 @@ class DeviceController extends Controller
       $nuorder->ORDER_TYPE = 'RETURN';
       $nuorder->DEVICE_TYPE = $devtype;
       $nuorder->REQ_STAFF_ID = $thedevice->STAFF_PROJ_ID;
-      $nuorder->STATUS = 'AB';
-      $nuorder->ORD_REMARK = '';
+      $nuorder->STATUS = 'AD';
+
+      $remark = ['R' => $req->REMARK];
+
+      $nuorder->ORD_REMARK = json_encode($remark);
       $nuorder->DEVICE_ID = $devid;
       $nuorder->save();
+
+      $this->logs($thedevice->STAFF_PROJ_ID, 'RETURN', ['ORDER_ID' => $nuorder->id, 'REMARK' => $remark]);
 
       // to do: alert the next person?
 
       return $this->respond_json(200, 'OK', $nuorder);
 
+    }
+
+    function DeviceChangeOwner(Request $req){
+      $input = app('request')->all();
+  		$rules = [
+  			'DEVICE_ID' => ['required'],
+        'DEVICE_TYPE' => ['required'],
+        'N_STAFF_ID' => ['required'],
+        'REMARK' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+      $devid = $req->DEVICE_ID;
+      $devtype= $req->DEVICE_TYPE;
+      $newowner = $req->N_STAFF_ID;
+
+      // check the device exist or not
+      if($devtype == 'DLCM' ){
+        $thedevice = Dlcm::findOrFail($devid);
+      } else {
+        $thedevice = Plcm::findOrFail($devid);
+      }
+
+      // check any open order for this device
+      $openorder = EuctOrder::where([
+        ['DEVICE_TYPE', '=', $devtype],
+        ['DEVICE_ID', '=', $devid],
+        ['STATUS', '!=', 'C']
+      ])->first();
+
+
+      if(empty($openorder)){
+
+      } else {
+        // got open order. deny
+        return $this->respond_json(409, 'Open order exist', $openorder);
+      }
+
+      // new order number
+      $ordernum = $this->getNextSequence('TTransfer');
+
+      // create the transfer order for this device
+      $nuorder = new EuctOrder;
+      $nuorder->ORDER_NO = $ordernum;
+      $nuorder->ORDER_TYPE = 'TRANSFER';
+      $nuorder->DEVICE_TYPE = $devtype;
+      $nuorder->REQ_STAFF_ID = $newowner;
+      $nuorder->STATUS = 'AD';
+
+      $remark = [
+        'R' => $req->REMARK,
+        'PREV_OWNER' => $thedevice->STAFF_PROJ_ID
+      ];
+
+      $nuorder->ORD_REMARK = json_encode($remark);
+      $nuorder->DEVICE_ID = $devid;
+      $nuorder->save();
+
+      $this->logs($newowner, 'TRANSFER', ['ORDER_ID' => $nuorder->id, 'REMARK' => $remark]);
+
+      // to do: alert the next person?
+
+      return $this->respond_json(200, 'OK', $nuorder);
+
+    }
+
+    function listDeviceByBC(Request $req){
+      $input = app('request')->all();
+  		$rules = [
+  			'BC_STAFF_ID' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+      $theretval = [];
+
+      // get the list of cost center under this BC
+      $cslist = EuctBc::where('BC_STAFF_ID', $req->BC_STAFF_ID)->get();
+
+      foreach($cslist as $thecostcenter){
+        // find the list of devices under this cost center
+
+        $devices = [
+          'COST_CENTER' => $thecostcenter->COST_CENTER,
+          'DLCM' => $this->findDlcmDevice('COST_CENTER', $thecostcenter->COST_CENTER),
+          'PLCM' => $this->findPlcmDevice('COST_CENTER', $thecostcenter->COST_CENTER)
+        ];
+
+        array_push($theretval, $devices);
+      }
+
+
+      return $this->respond_json(200, 'OK', $theretval);
     }
 
 
@@ -274,6 +382,7 @@ class DeviceController extends Controller
 
 
       foreach($sdata as $ddata){
+
         $arrd = [
           'id' => $ddata->id,
           'TAG_NO' => $ddata->TAG_NO,
@@ -284,8 +393,12 @@ class DeviceController extends Controller
           'CATEGORY' => $ddata->DESKTOP_TYPE,
           'MODEL' => $ddata->DESCRIPTION,
           'EXPIRY_DATE' => $ddata->EXPIRE_DATE,
-          'STATUS' => $ddata->ACTUAL_STATUS,
-          'EMAIL' => $ddata->END_USER_EMAIL,
+          'STATUS' => $ddata->STATUS,
+          'CONTACT_PERSON' => $ddata->CONTACT_PERSON,
+          'LOCATION' => $ddata->LOCATION,
+          'ACTUAL_STATUS' => $ddata->ACTUAL_STATUS,
+          'DETAILS_STATUS' => $ddata->DETAILS_STATUS,
+          'DLCM' => $ddata->DLCM,
         ];
 
         array_push($res, $arrd);

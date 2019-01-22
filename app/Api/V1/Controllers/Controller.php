@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller as BaseController;
 use App\EuctSequence;
 use App\EuctBc;
 use App\EuctAdmin;
+use App\EuctLog;
 
 /**
  * Shared functions will be placed here
@@ -89,6 +90,15 @@ class Controller extends BaseController
     set_error_handler(array($this, 'errorHandler'));
     mail('mohdamer.ahmad@tm.com.my', 'send from laravel', 'hai world!');
     return 'Done';
+  }
+
+  function logs($staffid, $action, $remark){
+    $insertlog = new EuctLog;
+    $insertlog->STAFF_ID = $staffid;
+    $insertlog->ACTION = $action;
+    $insertlog->DETAILS = json_encode($remark);
+
+    $insertlog->save();
   }
 
 
