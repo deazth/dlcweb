@@ -256,7 +256,9 @@ class DeviceController extends Controller
 
       $remark = [
                   'R' => $req->REMARK,
-                  'ORI_OWNER' => $thedevice->STAFF_PROJ_ID
+                  'ORI_OWNER' => $thedevice->STAFF_PROJ_ID,
+                  'ORI_NAME' => $thedevice->STAFF_PROJ_NAME,
+                  'TAG_NO' => $thedevice->TAG_NO
                 ];
 
       $nuorder->ORD_REMARK = json_encode($remark);
