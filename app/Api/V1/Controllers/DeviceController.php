@@ -209,7 +209,8 @@ class DeviceController extends Controller
   		$rules = [
   			'DEVICE_ID' => ['required'],
         'DEVICE_TYPE' => ['required'],
-        'REMARK' => ['required']
+        'REMARK' => ['required'],
+        'REQ_STAFF_ID' => ['required']
   		];
 
   		$validator = app('validator')->make($input, $rules);
@@ -239,7 +240,7 @@ class DeviceController extends Controller
 
       } else {
         // got open order. deny
-        return $this->respond_json(409, 'Open order exist', $openorder);
+        return $this->respond_json(409, 'Open order exist', $this->translateOrder($openorder));
       }
 
       // create new order number
@@ -250,20 +251,23 @@ class DeviceController extends Controller
       $nuorder->ORDER_NO = $ordernum;
       $nuorder->ORDER_TYPE = 'RETURN';
       $nuorder->DEVICE_TYPE = $devtype;
-      $nuorder->REQ_STAFF_ID = $thedevice->STAFF_PROJ_ID;
+      $nuorder->REQ_STAFF_ID = $req->REQ_STAFF_ID;
       $nuorder->STATUS = 'AD';
 
-      $remark = ['R' => $req->REMARK];
+      $remark = [
+                  'R' => $req->REMARK,
+                  'ORI_OWNER' => $thedevice->STAFF_PROJ_ID
+                ];
 
       $nuorder->ORD_REMARK = json_encode($remark);
       $nuorder->DEVICE_ID = $devid;
       $nuorder->save();
 
-      $this->logs($thedevice->STAFF_PROJ_ID, 'RETURN', ['ORDER_ID' => $nuorder->id, 'REMARK' => $remark]);
+      $this->logs($req->REQ_STAFF_ID, 'RETURN', ['ORDER_ID' => $nuorder->id, 'REMARK' => $remark]);
 
       // to do: alert the next person?
 
-      return $this->respond_json(200, 'OK', $nuorder);
+      return $this->respond_json(200, 'OK', $this->translateOrder($nuorder));
 
     }
 
@@ -304,7 +308,7 @@ class DeviceController extends Controller
 
       } else {
         // got open order. deny
-        return $this->respond_json(409, 'Open order exist', $openorder);
+        return $this->respond_json(409, 'Open order exist', $this->translateOrder($openorder));
       }
 
       // new order number
@@ -331,7 +335,7 @@ class DeviceController extends Controller
 
       // to do: alert the next person?
 
-      return $this->respond_json(200, 'OK', $nuorder);
+      return $this->respond_json(200, 'OK', $this->translateOrder($nuorder));
 
     }
 

@@ -19,6 +19,12 @@ class Controller extends BaseController
 		return $this->respond_json($errno, $errstr);
 	}
 
+  function translateOrder($order){
+    $orderremark = json_decode($order->ORD_REMARK);
+    $order->ORD_REMARK = $orderremark;
+    return $order;
+  }
+
 	function respond_json($retCode, $message, $data_arr = []){
 		$curtime = date("Y-m-d h:i:sa");
 		$retval = [

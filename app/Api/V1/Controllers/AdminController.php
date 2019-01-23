@@ -28,7 +28,7 @@ class AdminController extends Controller
     if($theorder->STATUS == 'C'){
       return $this->respond_json(401, 'Order already closed', $theorder);
     }
-    
+
     // move the status to next step:
     if($theorder->ORDER_TYPE == 'TRANSFER'){
       // get the detail of the new owner
@@ -74,7 +74,9 @@ class AdminController extends Controller
     // first, validate the input
     $input = app('request')->all();
     $rules = [
-      'ORDER_ID' => ['required']
+      'ORDER_ID' => ['required'],
+      'A_STAFF_ID' => ['required'],
+      'REMARK' => ['required']
     ];
 
     $validator = app('validator')->make($input, $rules);
@@ -84,18 +86,21 @@ class AdminController extends Controller
 
     $theorder = EuctOrder::findOrFail($req->ORDER_ID);
 
+    if($theorder->STATUS == 'C'){
+      return $this->respond_json(401, 'Order already closed', $this->translateOrder($theorder));
+    }
+
     // set the remark to 'rejected'
     $rem = json_decode($theorder->ORD_REMARK, TRUE);
-    $ori_rem = $rem->R;
-    $rem->R = 'Rejected';
+    $rem['REJECT_REMARK'] = $req->REMARK;
     $theorder->ORD_REMARK = json_encode($rem);
 
     $theorder->STATUS = 'C';
     $theorder->save();
 
-    $this->logs($req->A_STAFF_ID, 'REJECT', ['ORDER_ID' => $theorder->id, 'ORI_REMARK' => $ori_rem]);
+    $this->logs($req->A_STAFF_ID, 'REJECT', ['ORDER_ID' => $theorder->id, 'REJECT_REMARK' => $req->REMARK]);
     // to do: send alert?
-    return $this->respond_json(200, 'Order rejected', $theorder);
+    return $this->respond_json(200, 'Order rejected', $this->translateOrder($theorder));
   }
 
   function OrderPendingAD(Request $req){

@@ -67,9 +67,13 @@ TRANSFER
       }
 
       $sorders = EuctOrder::where('REQ_STAFF_ID', $req->STAFF_ID)->get();
+      $newarrayorder = [];
+      foreach($sorders as $oneorder){
+        array_push($newarrayorder, $this->translateOrder($oneorder));
+      }
 
       // return the whole order?
-      return $this->respond_json(200, 'List of orders', $sorders);
+      return $this->respond_json(200, 'List of orders', $newarrayorder);
 
     }
 
@@ -88,8 +92,12 @@ TRANSFER
 
       $sorders = EuctOrder::where('ORDER_NO', $req->ORDER_NO)->get();
 
+      $newarrayorder = [];
+      foreach($sorders as $oneorder){
+        array_push($newarrayorder, $this->translateOrder($oneorder));
+      }
       // return the whole order?
-      return $this->respond_json(200, 'List of orders', $sorders);
+      return $this->respond_json(200, 'List of orders', $newarrayorder);
 
     }
 
