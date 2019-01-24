@@ -7,6 +7,8 @@ use App\EuctSequence;
 use App\EuctBc;
 use App\EuctAdmin;
 use App\EuctLog;
+use App\Dlcm;
+use App\Plcm;
 
 /**
  * Shared functions will be placed here
@@ -20,7 +22,17 @@ class Controller extends BaseController
 	}
 
   function translateOrder($order){
-    $orderremark = json_decode($order->ORD_REMARK);
+    $orderremark = json_decode($order->ORD_REMARK, TRUE);
+
+    // add additional info
+    if($order->DEVICE_TYPE == 'DLCM'){
+      $thatdevice = Dlcm::find($order->DEVICE_ID);
+      $orderremark['TAG_NO'] = $thatdevice->TAG_NO;
+      $orderremark['MODEL'] = $thatdevice->DESCRIPTION;
+      $orderremark['EXPIRY_DATE'] = $thatdevice->EXPIRE_DATE;
+      $orderremark['SERIAL_NO'] = $thatdevice->SERIAL_NO;
+    }
+
     $order->ORD_REMARK = $orderremark;
     return $order;
   }
