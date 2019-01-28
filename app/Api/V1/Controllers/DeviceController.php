@@ -273,6 +273,74 @@ class DeviceController extends Controller
 
     }
 
+    function BuyDeviceReq(Request $req){
+
+      // first, validate the input
+  		$input = app('request')->all();
+  		$rules = [
+  			'DEVICE_ID' => ['required'],
+        'DEVICE_TYPE' => ['required'],
+        'REMARK' => ['required'],
+        'REQ_STAFF_ID' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+  		$devid = $req->DEVICE_ID;
+      $devtype= $req->DEVICE_TYPE;
+
+
+      if($devtype == 'DLCM' ){
+        $thedevice = Dlcm::findOrFail($devid);
+      } else {
+        $thedevice = Plcm::findOrFail($devid);
+      }
+
+      // check any open order for this device
+      $openorder = EuctOrder::where([
+        ['DEVICE_TYPE', '=', $devtype],
+        ['DEVICE_ID', '=', $devid],
+        ['STATUS', '!=', 'C']
+      ])->first();
+
+
+      if(empty($openorder)){
+
+      } else {
+        // got open order. deny
+        return $this->respond_json(409, 'Open order exist', $this->translateOrder($openorder));
+      }
+
+      // create new order number
+      $ordernum = $this->getNextSequence('TBuy');
+
+      // create the termination order for this device
+      $nuorder = new EuctOrder;
+      $nuorder->ORDER_NO = $ordernum;
+      $nuorder->ORDER_TYPE = 'BUY';
+      $nuorder->DEVICE_TYPE = $devtype;
+      $nuorder->REQ_STAFF_ID = $req->REQ_STAFF_ID;
+      $nuorder->STATUS = 'AD';
+
+      $remark = [
+                  'R' => $req->REMARK
+                ];
+
+      $nuorder->ORD_REMARK = json_encode($remark);
+      $nuorder->DEVICE_ID = $devid;
+      $nuorder->save();
+
+      $this->logs($req->REQ_STAFF_ID, 'BUY', ['ORDER_ID' => $nuorder->id, 'REMARK' => $remark]);
+
+      // to do: alert the next person?
+
+      return $this->respond_json(200, 'OK', $this->translateOrder($nuorder));
+
+    }
+
     function DeviceChangeOwner(Request $req){
       $input = app('request')->all();
   		$rules = [

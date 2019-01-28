@@ -26,7 +26,11 @@ class AdminController extends Controller
 
     // reject completed orders
     if($theorder->STATUS == 'C'){
-      return $this->respond_json(401, 'Order already closed', $theorder);
+      return $this->respond_json(401, 'Order already closed', $this->translateOrder($theorder));
+    }
+
+    if($theorder->STATUS != 'AD'){
+      return $this->respond_json(401, 'Order already approved', $this->translateOrder($theorder));
     }
 
     // move the status to next step:
@@ -67,7 +71,7 @@ class AdminController extends Controller
     $this->logs($req->A_STAFF_ID, 'APPROVE', ['ORDER_ID' => $theorder->id]);
 
     // to do: send alert?
-    return $this->respond_json(200, 'Admin Approved', $theorder);
+    return $this->respond_json(200, 'Admin Approved', $this->translateOrder($theorder));
   }
 
   function OrderAdminReject(Request $req){
@@ -106,15 +110,76 @@ class AdminController extends Controller
   function OrderPendingAD(Request $req){
     $pendingorder = EuctOrder::where('STATUS', 'AD')->get();
 
-    return $this->respond_json(200, 'List of orders', $pendingorder);
+    $newarrayorder = [];
+    foreach($pendingorder as $oneorder){
+      array_push($newarrayorder, $this->translateOrder($oneorder));
+    }
+
+
+    return $this->respond_json(200, 'List of orders', $newarrayorder);
 
   }
 
-  // internal order processing functions
-  function transferOwnership($order){
+  function OrderPendingPAY(Request $req){
+    $pendingorder = EuctOrder::where('STATUS', 'PAY')->get();
+
+    $newarrayorder = [];
+    foreach($pendingorder as $oneorder){
+      array_push($newarrayorder, $this->translateOrder($oneorder));
+    }
 
 
+    return $this->respond_json(200, 'List of orders', $newarrayorder);
 
+  }
+
+  function OrderReceivePayment(Request $req){
+    // first, validate the input
+    $input = app('request')->all();
+    $rules = [
+      'ORDER_ID' => ['required'],
+      'A_STAFF_ID' => ['required']
+    ];
+
+    $validator = app('validator')->make($input, $rules);
+    if($validator->fails()){
+      return $this->respond_json(412, 'Invalid input', $input);
+    }
+
+    // find the order
+    $theorder = EuctOrder::findOrFail($req->ORDER_ID);
+
+    // check if the order has been approved
+    if($theorder->STATUS == 'C'){
+      return $this->respond_json(401, 'Order already closed', $this->translateOrder($theorder));
+    }
+    if($theorder->STATUS != 'PAY'){
+      return $this->respond_json(401, 'Order not yet approved', $this->translateOrder($theorder));
+    }
+
+    // then find the device
+    if($theorder->DEVICE_TYPE == 'DLCM' ){
+      $thedevice = Dlcm::findOrFail($theorder->DEVICE_ID);
+    } else {
+      $thedevice = Plcm::findOrFail($theorder->DEVICE_ID);
+    }
+
+    // update the status in the device
+    $thedevice->STATUS = 'INACTIVE';
+    $thedevice->DETAILS_STATUS = 'PURCHASE';
+    $thedevice->ACTUAL_STATUS = 'PAYMENT COMPLETED';
+    $thedevice->save();
+
+    // update the order
+    $theorder->STATUS = 'C';
+    $orderremark = json_decode($theorder->ORD_REMARK, TRUE);
+    $orderremark['RCVD_PAY'] = $req->A_STAFF_ID;
+    $theorder->ORD_REMARK = json_encode($orderremark);
+    $theorder->save();
+
+    $this->logs($req->A_STAFF_ID, 'RECEIVE PAY', ['ORDER_ID' => $theorder->id]);
+
+    return $this->respond_json(200, 'Payment received', $this->translateOrder($theorder));
 
   }
 

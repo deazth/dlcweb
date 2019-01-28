@@ -54,6 +54,7 @@ $api->version('v1', function ($api) {
     $api->POST('/ReturnDeviceReq', ['uses' => 'App\Api\V1\Controllers\DeviceController@returnDeviceReq']);
     $api->POST('/ListDeviceByBC', ['uses' => 'App\Api\V1\Controllers\DeviceController@listDeviceByBC']);
     $api->POST('/DeviceChangeOwner', ['uses' => 'App\Api\V1\Controllers\DeviceController@DeviceChangeOwner']);
+    $api->POST('/BuyDeviceReq', ['uses' => 'App\Api\V1\Controllers\DeviceController@BuyDeviceReq']);
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);
@@ -70,6 +71,8 @@ $api->version('v1', function ($api) {
     $api->post('/OrderAdminApprove', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderAdminApprove']);
     $api->post('/OrderAdminReject', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderAdminReject']);
     $api->get('/OrderPendingAD', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingAD']);
+    $api->get('/OrderPendingPAY', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingPAY']);
+    $api->post('/OrderReceivePayment', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderReceivePayment']);
 
     // BC management
     $api->post('/BcCreate', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
