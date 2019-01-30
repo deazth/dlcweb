@@ -11,4 +11,4 @@
 |
 */
 
-Route::get('/', 'BaseController@returnIndex');
+Route::get('/', 'BaseController@returnBase');

@@ -38,4 +38,8 @@ class BaseController extends Controller
 		return response()->json($response);
 	}
 
+	function returnBase(){
+		return 'API Home';
+	}
+
 }
