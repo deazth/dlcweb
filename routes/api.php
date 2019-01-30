@@ -55,6 +55,8 @@ $api->version('v1', function ($api) {
     $api->POST('/ListDeviceByBC', ['uses' => 'App\Api\V1\Controllers\DeviceController@listDeviceByBC']);
     $api->POST('/DeviceChangeOwner', ['uses' => 'App\Api\V1\Controllers\DeviceController@DeviceChangeOwner']);
     $api->POST('/BuyDeviceReq', ['uses' => 'App\Api\V1\Controllers\DeviceController@BuyDeviceReq']);
+    $api->POST('/DeviceReportLost', ['uses' => 'App\Api\V1\Controllers\DeviceController@DeviceReportLost']);
+
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);

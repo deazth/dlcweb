@@ -63,6 +63,22 @@ class AdminController extends Controller
     } else if ($theorder->ORDER_TYPE == 'RETURN'){
       // move to pending device collection
       $theorder->STATUS = 'DC';
+    } else if ($theorder->ORDER_TYPE == 'LOST'){
+      // update the main table
+      if($theorder->DEVICE_TYPE == 'DLCM' ){
+        $thedevice = Dlcm::findOrFail($theorder->DEVICE_ID);
+      } else {
+        $thedevice = Plcm::findOrFail($theorder->DEVICE_ID);
+      }
+
+      // update the main table (staff id and cost center)
+      $thedevice->STATUS = 'LOST';
+      $thedevice->DETAILS_STATUS = 'LOST';
+      $rem = json_decode($theorder->ORD_REMARK, TRUE);
+      $thedevice->ACTUAL_STATUS = $rem['REPORT_NO'];
+      $thedevice->save();
+
+      $theorder->STATUS = 'C';
     }
 
     $theorder->save();
