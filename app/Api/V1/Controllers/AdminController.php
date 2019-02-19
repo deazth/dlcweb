@@ -40,6 +40,7 @@ class AdminController extends Controller
       $ldapinfo = $ldapobj->fetchUser($theorder->REQ_STAFF_ID, 'id');
       if($ldapinfo['code'] == 200){
         $reqcs = $ldapinfo['data']['COST_CENTER'];
+        $reqname = $ldapinfo['data']['NAME'];
       } else {
         return $ldapinfo;
       }
@@ -53,6 +54,7 @@ class AdminController extends Controller
 
       // update the main table (staff id and cost center)
       $thedevice->STAFF_PROJ_ID = $theorder->REQ_STAFF_ID;
+      $thedevice->STAFF_PROJ_NAME = $reqname;
       $thedevice->COST_CENTER = $reqcs;
       $thedevice->save();
 
@@ -149,11 +151,25 @@ class AdminController extends Controller
 
   }
 
+  function OrderPendingDC(Request $req){
+    $pendingorder = EuctOrder::where('STATUS', 'DC')->get();
+
+    $newarrayorder = [];
+    foreach($pendingorder as $oneorder){
+      array_push($newarrayorder, $this->translateOrder($oneorder));
+    }
+
+
+    return $this->respond_json(200, 'List of orders', $newarrayorder);
+
+  }
+
   function OrderReceivePayment(Request $req){
     // first, validate the input
     $input = app('request')->all();
     $rules = [
       'ORDER_ID' => ['required'],
+      'RECEIPT_NO' => ['required'],
       'A_STAFF_ID' => ['required']
     ];
 
@@ -190,10 +206,12 @@ class AdminController extends Controller
     $theorder->STATUS = 'C';
     $orderremark = json_decode($theorder->ORD_REMARK, TRUE);
     $orderremark['RCVD_PAY'] = $req->A_STAFF_ID;
+    $orderremark['RCPT_NO'] = $req->RECEIPT_NO;
     $theorder->ORD_REMARK = json_encode($orderremark);
     $theorder->save();
 
-    $this->logs($req->A_STAFF_ID, 'RECEIVE PAY', ['ORDER_ID' => $theorder->id]);
+    $this->logs($req->A_STAFF_ID, 'RECEIVE PAY',
+      ['ORDER_ID' => $theorder->id, 'RECEIPT_NO' => $req->RECEIPT_NO]);
 
     return $this->respond_json(200, 'Payment received', $this->translateOrder($theorder));
 

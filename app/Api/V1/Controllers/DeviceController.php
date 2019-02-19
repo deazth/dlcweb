@@ -9,6 +9,7 @@ use App\EuctOrder;
 use App\EuctBc;
 use \DateTime;
 use \DateTimeZone;
+use \DB;
 
 class DeviceController extends Controller
 {
@@ -517,9 +518,48 @@ class DeviceController extends Controller
       return $this->respond_json(200, 'OK', $theretval);
     }
 
+    function getDlcmDeviceStatus(){
+
+      return [
+        'DLCM1' => $this->getDeviceStatusforDlcm('1'),
+        'DLCM2' => $this->getDeviceStatusforDlcm('2')
+      ];
+    }
+
 
 
     // function to be used internally
+
+    function getDeviceStatusforDlcm($dlcm_no){
+      $ret = [];
+      // first get the distinct type
+      $dtype = DB::table('DLCM_FULL')
+        ->select('DESKTOP_TYPE')
+        ->groupBy('DESKTOP_TYPE')
+        ->where('DLCM', $dlcm_no)->get();
+
+      foreach($dtype as $stype){
+        $sret = ['TYPE' => $stype->DESKTOP_TYPE];
+        // for each type, get the count
+        $scount = DB::table('DLCM_FULL')
+          ->select('STATUS', DB::raw('count(*) as total'))
+          ->groupBy('STATUS')
+          ->where('DLCM', $dlcm_no)
+          ->where('DESKTOP_TYPE', $stype->DESKTOP_TYPE)->get();
+
+
+        foreach($scount as $thecount){
+          $sret[$thecount->STATUS] = $thecount->total;
+        }
+
+        // push it into the return array
+        array_push($ret, $sret);
+
+      }
+
+      return $ret;
+
+    }
 
     function findDlcmDevice($fieldfilter, $searchno){
       $res = [];

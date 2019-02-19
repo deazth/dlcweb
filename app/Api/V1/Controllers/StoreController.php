@@ -93,9 +93,9 @@ class StoreController extends Controller
       'STAFF_ID' => ['required'],
       'TAG_NO' => ['required'],
       'EQUIP_TYPE' => ['required'],
-      'BATCH_NO' => ['required'],
+      'MODEL' => ['required'],
       'SERIAL_NUMBER' => ['required'],
-      'DELIVERY_DATE' => ['required']
+      'WARRANTY' => ['required']
     ];
 
     $validator = app('validator')->make($input, $rules);
@@ -106,16 +106,9 @@ class StoreController extends Controller
     $staffid = $request->STAFF_ID;
     $tagno = $request->TAG_NO;
     $eqtype = $request->EQUIP_TYPE;
-    $batchno = $request->BATCH_NO;
+    $batchno = $request->MODEL;
     $serialno = $request->SERIAL_NUMBER;
-    $deliverydate = $request->DELIVERY_DATE;
-
-    // first, check the role of this staff
-    $role = $this->getRole($staffid);
-
-    if($role != 'SM'){
-      return $this->respond_json(403, 'Not a store manager', ['Role' => $role]);
-    }
+    $deliverydate = $request->WARRANTY;
 
     // search for the item in store
     $storeitem = EuctStore::where('TAG_NO', $tagno)
@@ -123,22 +116,22 @@ class StoreController extends Controller
                 ->first();  // expect to only have 1
 
     if($storeitem){
-      // device exist in store. check the status
+      // device exist in store
       return $this->respond_json(417, 'Device already exist', $storeitem);
     } else {
       // not exist. create new?
       $storeitem = new EuctStore;
       $storeitem->STATUS = 'New';
       $storeitem->EQUIP_TYPE = $eqtype;
-      $storeitem->BATCH_NO = $batchno;
-      $storeitem->DELIVERY_DATE = $deliverydate;
+      $storeitem->MODEL = $batchno;
+      $storeitem->WARRANTY_DATE = $deliverydate;
       $storeitem->ADDED_BY = $staffid;
       $storeitem->TAG_NO = $tagno;
       $storeitem->SERIAL_NUMBER = $serialno;
 
       // default values
 
-      $storeitem->MODEL = '';
+      $storeitem->BATCH_NO = '';
       $storeitem->BRAND = '';
       $storeitem->CATEGORY = '';
       $storeitem->RECEIVED_BY = '';

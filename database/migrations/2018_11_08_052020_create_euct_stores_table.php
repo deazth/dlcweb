@@ -32,7 +32,7 @@ class CreateEuctStoresTable extends Migration
 
             $table->string('BATCH_NO');
             $table->string('EQUIP_TYPE');
-            $table->string('DELIVERY_DATE');
+            $table->string('WARRANTY_DATE');
             $table->string('ADDED_BY');
             $table->string('RECEIVED_BY');
         });

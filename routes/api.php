@@ -2,33 +2,6 @@
 
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-/*
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('login', function() {
-	return 'lala';
-});
-
-// Authentication related APIs
-Route::get('authcon', 'LdapAuthController@authcon');
-Route::get('getuserinfo', 'LdapAuthController@getUserInfo');
-Route::get('LoginApi', 'LdapAuthController@doLogin');
-
-// User activities
-Route::get('FindDeviceBySerial', 'DeviceController@FindDeviceBySerialApi');
-*/
 
 $api = app('Dingo\Api\Routing\Router');
 
@@ -57,6 +30,8 @@ $api->version('v1', function ($api) {
     $api->POST('/BuyDeviceReq', ['uses' => 'App\Api\V1\Controllers\DeviceController@BuyDeviceReq']);
     $api->POST('/DeviceReportLost', ['uses' => 'App\Api\V1\Controllers\DeviceController@DeviceReportLost']);
 
+    $api->GET('/GetDeviceStatus', ['uses' => 'App\Api\V1\Controllers\DeviceController@getDlcmDeviceStatus']);
+
 
     // Store APIs
     $api->post('/UpdateStoreAPI', ['uses' => 'App\Api\V1\Controllers\StoreController@UpdateStoreAPI']);
@@ -74,6 +49,7 @@ $api->version('v1', function ($api) {
     $api->post('/OrderAdminReject', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderAdminReject']);
     $api->get('/OrderPendingAD', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingAD']);
     $api->get('/OrderPendingPAY', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingPAY']);
+    $api->get('/OrderPendingDC', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingDC']);
     $api->post('/OrderReceivePayment', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderReceivePayment']);
 
     // BC management
