@@ -3,12 +3,14 @@ namespace App\Api\V1\Controllers;
 
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Mail;
 use App\EuctSequence;
 use App\EuctBc;
 use App\EuctAdmin;
 use App\EuctLog;
 use App\Dlcm;
 use App\Plcm;
+use App\Mail\EucEmailer;
 
 /**
  * Shared functions will be placed here
@@ -104,9 +106,11 @@ class Controller extends BaseController
 		}
 	}
 
-  function sendEmail(){
-    set_error_handler(array($this, 'errorHandler'));
-    mail('mohdamer.ahmad@tm.com.my', 'send from laravel', 'hai world!');
+  function sendEmail($email_addr, $type, $data){
+
+    if($type == 'Order'){
+      Mail::to($email_addr)->send(new EucEmailer);
+    }
     return 'Done';
   }
 
