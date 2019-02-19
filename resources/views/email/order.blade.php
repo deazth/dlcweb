@@ -6,7 +6,7 @@
   </head>
   <body>
     <p>
-      order
+      order: {{ $orderno }}
     </p>
   </body>
 </html>
