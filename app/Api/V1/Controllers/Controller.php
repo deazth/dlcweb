@@ -107,10 +107,10 @@ class Controller extends BaseController
 
   function sendEmail($email_addr, $type, $data){
 
-    Mail::send('email.order', ['orderno' => $data], function ($message)
+    Mail::send('email.order', ['orderno' => 'contoh nombor'], function ($message)
     {
       $message->from('donotreply@tm.com.my', 'DLCM System');
-      $message->to($email_addr);
+      $message->to('mohdamer.ahmad@tm.com.my');
       $message->subject('DLCM Order');
 
     });

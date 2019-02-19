@@ -197,7 +197,7 @@ class LdapAuthController extends Controller
 
 	function authcon(Request $req){
 
-		return $this->sendEmail($req->email, 'Order', 'TR000023');
+		return $this->sendEmail('mohdamer.ahmad@tm.com.my', 'Order', 'TR000023');
 
 	}
 }
