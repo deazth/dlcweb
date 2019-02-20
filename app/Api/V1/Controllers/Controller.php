@@ -11,6 +11,9 @@ use App\EuctLog;
 use App\Dlcm;
 use App\Plcm;
 
+use App\Mail\OrderBuy;
+use App\Mail\OrderReturn;
+
 /**
  * Shared functions will be placed here
  */
@@ -107,13 +110,15 @@ class Controller extends BaseController
 
   function sendEmail($email_addr, $type, $data){
 
-    Mail::send('email.order', ['orderno' => 'contoh nombor'], function ($message)
-    {
-      $message->from('donotreply@tm.com.my', 'DLCM System');
-      $message->to('mohdamer.ahmad@tm.com.my');
-      $message->subject('DLCM Order');
+    Mail::to($email_addr)->send(new OrderReturn($data));
 
-    });
+    // Mail::send('email.order', ['orderno' => 'contoh nombor'], function ($message)
+    // {
+    //   $message->from('donotreply@tm.com.my', 'DLCM System');
+    //   $message->to('mohdamer.ahmad@tm.com.my');
+    //   $message->subject('DLCM Order');
+    //
+    // });
 
     return response()->json(['message' => 'Request completed']);
 
