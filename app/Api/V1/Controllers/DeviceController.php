@@ -266,11 +266,11 @@ class DeviceController extends Controller
       $nuorder->STATUS = 'AD';
 
       $remark = [
-                  'R' => $req->REMARK,
-                  'ORI_OWNER' => $thedevice->STAFF_PROJ_ID,
-                  'ORI_NAME' => $thedevice->STAFF_PROJ_NAME,
-                  'TAG_NO' => $thedevice->TAG_NO
-                ];
+        'R' => $req->REMARK,
+        'ORI_OWNER' => $thedevice->STAFF_PROJ_ID,
+        'ORI_NAME' => $thedevice->STAFF_PROJ_NAME,
+        'TAG_NO' => $thedevice->TAG_NO
+      ];
 
       $nuorder->ORD_REMARK = json_encode($remark);
       $nuorder->DEVICE_ID = $devid;
@@ -337,7 +337,9 @@ class DeviceController extends Controller
       $nuorder->STATUS = 'AD';
 
       $remark = [
-                  'R' => $req->REMARK
+                  'R' => $req->REMARK,
+                  'ORI_OWNER' => $thedevice->STAFF_PROJ_ID,
+                  'ORI_NAME' => $thedevice->STAFF_PROJ_NAME
                 ];
 
       $nuorder->ORD_REMARK = json_encode($remark);
@@ -404,6 +406,8 @@ class DeviceController extends Controller
 
       $remark = [
         'R' => $req->REMARK,
+        'ORI_OWNER' => $thedevice->STAFF_PROJ_ID,
+        'ORI_NAME' => $thedevice->STAFF_PROJ_NAME,
         'REPORT_NO' => $req->REPORT_NO
       ];
 
@@ -471,7 +475,8 @@ class DeviceController extends Controller
 
       $remark = [
         'R' => $req->REMARK,
-        'PREV_OWNER' => $thedevice->STAFF_PROJ_ID
+        'ORI_OWNER' => $thedevice->STAFF_PROJ_ID,
+        'ORI_NAME' => $thedevice->STAFF_PROJ_NAME
       ];
 
       $nuorder->ORD_REMARK = json_encode($remark);
