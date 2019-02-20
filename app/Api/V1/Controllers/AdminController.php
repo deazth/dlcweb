@@ -251,9 +251,9 @@ class AdminController extends Controller
   }
 
   function getEmail($staffid){
-    if(env('MAIN_EUC_ENABLE', false) == false){
-      return 'no email';
-    }
+    // if(env('MAIN_EUC_ENABLE', false) == false){
+    //   return 'no email';
+    // }
     // get the email address from ldap
     $ldapobj = new LdapAuthController;
     $ldapinfo = $ldapobj->fetchUser($staffid, 'id');
