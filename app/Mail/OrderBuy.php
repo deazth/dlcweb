@@ -11,14 +11,15 @@ class OrderBuy extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $data;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($info)
     {
-        //
+        $this->data = $info;
     }
 
     /**
@@ -28,6 +29,7 @@ class OrderBuy extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->view('email.obuy')
+          ->subject('DLCM Device Purchase - ' . $this->data['orderno']);
     }
 }

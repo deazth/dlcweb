@@ -31,6 +31,6 @@ class OrderReturn extends Mailable
     public function build()
     {
         return $this->view('email.oreturn')
-          ->subject('DLCM Device Return ' . $this->data['orderno']);
+          ->subject('DLCM Device Return - ' . $this->data['orderno']);
     }
 }

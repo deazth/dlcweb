@@ -7,9 +7,9 @@
     <style>
 
     .info {
-      align: justify;
+      text-align: justify;
     }
-    .detail > a {
+    .detail {
         color: #636b6f;
         padding: 0 25px;
         font-size: 12px;
@@ -17,6 +17,8 @@
         letter-spacing: .1rem;
         text-decoration: none;
         text-transform: uppercase;
+        background-image: linear-gradient(to right, yellow, magenta);
+        border-radius: 10px;
     }
 
     </style>
@@ -26,6 +28,7 @@
     <div class="info">
       Your device return request has been approved. Please proceed to send the device to the nearest collection point.
     </div>
+    <br />
     <div class="detail">
       Order No: {{ $data['orderno'] }}
     </div>
