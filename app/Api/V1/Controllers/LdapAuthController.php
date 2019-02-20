@@ -201,7 +201,10 @@ class LdapAuthController extends Controller
 			'ordertype' => 'BELI',
 			'reason' => 'tabuli ini machiem'
 		];
-		return $this->sendEmail('mohdamer.ahmad@tm.com.my', 'REJECT', $dat);
+
+		$this->sendEmail('mohdamer.ahmad@tm.com.my', 'REJECT', $dat);
+
+		return 'email sent';
 
 	}
 }
