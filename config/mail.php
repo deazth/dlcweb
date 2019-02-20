@@ -120,6 +120,6 @@ return [
         ],
     ],
 
-    'doiwanttosend' => env('MAIL_EUC_ENABLE', false),
+    'doiwanttosend' => env('MAIL_EUC_ENABLE'),
 
 ];

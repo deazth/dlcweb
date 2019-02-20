@@ -196,15 +196,21 @@ class LdapAuthController extends Controller
 
 
 	function authcon(Request $req){
-		$dat = [
-			'orderno' => 'TR000412',
-			'ordertype' => 'BELI',
-			'reason' => 'tabuli ini machiem'
-		];
+		// $dat = [
+		// 	'orderno' => 'TR000412',
+		// 	'ordertype' => 'BELI',
+		// 	'reason' => 'tabuli ini machiem'
+		// ];
+		//
+		// $this->sendEmail('mohdamer.ahmad@tm.com.my', 'REJECT', $dat);
 
-		$this->sendEmail('mohdamer.ahmad@tm.com.my', 'REJECT', $dat);
 
-		return 'email sent';
+		if(config('mail.doiwanttosend')){
+			return 'main is set to send';
+		} else {
+			return 'not allowed to send email lol';
+		}
+		// return 'email sent';
 
 	}
 }
