@@ -111,7 +111,7 @@ class Controller extends BaseController
 
   function sendEmail($email_addr, $type, $data){
     // only send if the setting is enabled
-    if(env('MAIN_EUC_ENABLE', 'false') == 'true'){
+    if(env('MAIN_EUC_ENABLE', false) == true){
 
       if($type == 'REJECT'){
         Mail::to($email_addr)->send(new EucEmailer($data));
@@ -120,6 +120,10 @@ class Controller extends BaseController
       } elseif ($type == 'RETURN') {
         Mail::to($email_addr)->send(new OrderReturn($data));
       }
+
+      return 'email sent';
+    } else {
+      return 'email not sent';
     }
   }
 
