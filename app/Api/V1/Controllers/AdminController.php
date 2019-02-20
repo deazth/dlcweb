@@ -251,17 +251,19 @@ class AdminController extends Controller
   }
 
   function getEmail($staffid){
-    // if(env('MAIN_EUC_ENABLE', false) == false){
-    //   return 'no email';
-    // }
-    // get the email address from ldap
-    $ldapobj = new LdapAuthController;
-    $ldapinfo = $ldapobj->fetchUser($staffid, 'id');
-    if($ldapinfo['code'] == 200){
-      return $ldapinfo['data']['EMAIL'];
+    if(config('mail.doiwanttosend')){
+      // get the email address from ldap
+      $ldapobj = new LdapAuthController;
+      $ldapinfo = $ldapobj->fetchUser($staffid, 'id');
+      if($ldapinfo['code'] == 200){
+        return $ldapinfo['data']['EMAIL'];
+      } else {
+        return 'no email';
+      }
     } else {
-      return 'no email';
+      return 'email not enabled';
     }
+
   }
 
 }
