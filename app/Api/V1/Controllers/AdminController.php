@@ -33,6 +33,7 @@ class AdminController extends Controller
       return $this->respond_json(401, 'Order already approved', $this->translateOrder($theorder));
     }
 
+
     // move the status to next step:
     if($theorder->ORDER_TYPE == 'TRANSFER'){
       // get the detail of the new owner
@@ -89,6 +90,21 @@ class AdminController extends Controller
     $this->logs($req->A_STAFF_ID, 'APPROVE', ['ORDER_ID' => $theorder->id]);
 
     // to do: send alert?
+    if($theorder->ORDER_TYPE == 'BUY' || $theorder->ORDER_TYPE == 'RETURN'){
+      // get the email address
+      $emailaddr = $this->getEmail($theorder->REQ_STAFF_ID);
+      if($emailaddr == 'no email'){
+        // no email address found. do nothing then
+      } else {
+        // build the data to include in the email
+        $data = [
+          'orderno' => $theorder->ORDER_NO
+        ];
+
+        // send the EMAIL
+        $this->sendEmail($emailaddr, $theorder->ORDER_TYPE, $data);
+      }
+    }
     return $this->respond_json(200, 'Admin Approved', $this->translateOrder($theorder));
   }
 
@@ -122,6 +138,23 @@ class AdminController extends Controller
 
     $this->logs($req->A_STAFF_ID, 'REJECT', ['ORDER_ID' => $theorder->id, 'REJECT_REMARK' => $req->REMARK]);
     // to do: send alert?
+
+    // get the email address
+    $emailaddr = $this->getEmail($theorder->REQ_STAFF_ID);
+    if($emailaddr == 'no email'){
+      // no email address found. do nothing then
+    } else {
+      // build the data to include in the email
+      $data = [
+        'orderno' => $theorder->ORDER_NO,
+        'ordertype' => $theorder->ORDER_TYPE,
+        'reason' => $req->REMARK
+      ];
+
+      // send the EMAIL
+      $this->sendEmail($emailaddr, 'REJECT', $data);
+    }
+
     return $this->respond_json(200, 'Order rejected', $this->translateOrder($theorder));
   }
 
@@ -215,6 +248,20 @@ class AdminController extends Controller
 
     return $this->respond_json(200, 'Payment received', $this->translateOrder($theorder));
 
+  }
+
+  function getEmail($staffid){
+    if(env('MAIN_EUC_ENABLE', 'false') == 'false'){
+      return 'no email';
+    }
+    // get the email address from ldap
+    $ldapobj = new LdapAuthController;
+    $ldapinfo = $ldapobj->fetchUser($staffid, 'id');
+    if($ldapinfo['code'] == 200){
+      return $ldapinfo['data']['EMAIL'];
+    } else {
+      return 'no email';
+    }
   }
 
 }
