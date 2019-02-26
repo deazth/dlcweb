@@ -196,21 +196,10 @@ class LdapAuthController extends Controller
 
 
 	function authcon(Request $req){
-		// $dat = [
-		// 	'orderno' => 'TR000412',
-		// 	'ordertype' => 'BELI',
-		// 	'reason' => 'tabuli ini machiem'
-		// ];
-		//
-		// $this->sendEmail('mohdamer.ahmad@tm.com.my', 'REJECT', $dat);
+		// $fpath = $req->file('FILE')->store('reports');
+		return 'nom';
 
-
-		if(config('mail.doiwanttosend')){
-			return 'main is set to send';
-		} else {
-			return 'not allowed to send email lol';
-		}
-		// return 'email sent';
+		// return \Storage::download('reports/Q20qXKt1nJ888JjZICEWwjUuERHWBpeadnaCxqMQ.pdf', 'Lostreport.pdf');
 
 	}
 }

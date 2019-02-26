@@ -75,6 +75,71 @@ TRANSFER
       }
     }
 
+    function addAttachment(Request $req){
+      $input = app('request')->all();
+      $rules = [
+        'ORDER_ID' => ['required'],
+        'FILE' => ['required']
+      ];
+
+      $validator = app('validator')->make($input, $rules);
+      if($validator->fails()){
+        return $this->respond_json(412, 'Invalid input', $input);
+      }
+
+      // find the order
+      $theorder = EuctOrder::find($req->ORDER_ID)->first();
+      if($theorder){
+        // upload the file
+        $fpath = $req->file('FILE')->store('reports');
+
+        // append the path back to the order
+        $rem = json_decode($theorder->ORD_REMARK, TRUE);
+        $rem['REPORT_PATH'] = $fpath;
+        $theorder->ORD_REMARK = json_encode($rem);
+        $theorder->save();
+
+        return $this->respond_json(200, 'uploaded', $this->translateOrder($theorder));
+
+      } else {
+        return $this->respond_json(404, 'Order not found', ['ORDER_ID' => $req->ORDER_ID]);
+      }
+
+    }
+
+    function getAttachment(Request $req){
+      $input = app('request')->all();
+      $rules = [
+        'ORDER_ID' => ['required']
+      ];
+
+      $validator = app('validator')->make($input, $rules);
+      if($validator->fails()){
+        return $this->respond_json(412, 'Invalid input', $input);
+      }
+
+      $theorder = EuctOrder::find($req->ORDER_ID)->first();
+      if($theorder){
+        // append the path back to the order
+        $rem = json_decode($theorder->ORD_REMARK, TRUE);
+        if(isset($rem['REPORT_PATH'])){
+
+          // build up better output filename
+          // first get the extension
+          $outfilename = $theorder->ORDER_NO . substr($rem['REPORT_PATH'], strrpos($rem['REPORT_PATH'], '.'));
+
+          return \Storage::download($rem['REPORT_PATH'], $outfilename);
+        } else {
+          return $this->respond_json(404, 'No attachment for this order', ['ORDER_ID' => $req->ORDER_ID]);
+        }
+        return $this->respond_json(200, 'uploaded', $this->translateOrder($theorder));
+
+      } else {
+        return $this->respond_json(404, 'Order not found', ['ORDER_ID' => $req->ORDER_ID]);
+      }
+
+    }
+
     function QueryStaffOrderAPI(Request $req){
 
       // first, validate the input
