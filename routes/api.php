@@ -61,6 +61,7 @@ $api->version('v1', function ($api) {
 
     // Order APIs
     $api->post('/OrderUpdateUserForm', ['uses' => 'App\Api\V1\Controllers\OrderController@updateUserReqForm']);
+    $api->post('/OrderGetUserForm', ['uses' => 'App\Api\V1\Controllers\OrderController@getUserReqForm']);
     $api->post('/QueryStaffOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryStaffOrderAPI']);
     $api->post('/QueryOrderAPI', ['uses' => 'App\Api\V1\Controllers\OrderController@QueryOrderAPI']);
     $api->post('/OrderCollectDevice', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderCollectDevice']);

@@ -53,6 +53,28 @@ TRANSFER
       return $this->respond_json(200, 'User info saved', $cUser);
     }
 
+    function getUserReqForm(Request $req){
+
+      // first, validate the input
+      $input = app('request')->all();
+      $rules = [
+        'STAFF_ID' => ['required']
+      ];
+
+      $validator = app('validator')->make($input, $rules);
+      if($validator->fails()){
+        return $this->respond_json(412, 'Invalid input', $input);
+      }
+
+      // find or create this user
+      $cUser = EuctUser::where('STAFF_ID', $req->STAFF_ID)->first();
+      if($cUser){
+        return $this->respond_json(200, 'User info', $cUser);
+      } else {
+        return $this->respond_json(404, 'User not found', $input);
+      }
+    }
+
     function QueryStaffOrderAPI(Request $req){
 
       // first, validate the input
