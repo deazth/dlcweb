@@ -632,6 +632,21 @@ class DeviceController extends Controller
       return $res;
     }
 
+    function AdminUpdateDevice(Request $req){
+      $input = app('request')->all();
+  		$rules = [
+  			'DEVICE_ID' => ['required'],
+        'DEVICE_TYPE' => ['required'],
+        'STAFF_ID' => ['required'],
+        'NAME' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+    }
+
     function reqTerminateDlcm($did){
 
 

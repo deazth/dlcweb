@@ -33,7 +33,8 @@ TRANSFER
         'STAFF_NAME' => ['required'],
         'COST_CENTER' => ['required'],
         'OFFICE_ADDR' => ['required'],
-        'CONTACT_NO' => ['required']
+        'CONTACT_NO' => ['required'],
+        'EMAIL' => ['required']
       ];
 
       $validator = app('validator')->make($input, $rules);
@@ -48,6 +49,7 @@ TRANSFER
       $cUser->COST_CENTER = $req->COST_CENTER;
       $cUser->OFFICE_ADDR = $req->OFFICE_ADDR;
       $cUser->CONTACT_NO = $req->CONTACT_NO;
+      $cUser->EMAIL = $req->EMAIL;
       $cUser->save();
 
       return $this->respond_json(200, 'User info saved', $cUser);
