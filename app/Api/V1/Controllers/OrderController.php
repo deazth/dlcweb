@@ -90,7 +90,7 @@ TRANSFER
       }
 
       // find the order
-      $theorder = EuctOrder::find($req->ORDER_ID)->first();
+      $theorder = EuctOrder::where('id', $req->ORDER_ID)->first();
       if($theorder){
         // upload the file
         $fpath = $req->file('FILE')->store('reports');
@@ -120,7 +120,7 @@ TRANSFER
         return $this->respond_json(412, 'Invalid input', $input);
       }
 
-      $theorder = EuctOrder::find($req->ORDER_ID)->first();
+      $theorder = EuctOrder::find($req->ORDER_ID);
       if($theorder){
         // append the path back to the order
         $rem = json_decode($theorder->ORD_REMARK, TRUE);
