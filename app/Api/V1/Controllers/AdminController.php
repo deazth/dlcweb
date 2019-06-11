@@ -250,6 +250,23 @@ class AdminController extends Controller
 
   }
 
+  function getSummary(){
+    $returncount = EuctOrder::where('ORDER_TYPE', 'RETURN')
+      ->where('STATUS', 'AD')->count();
+    $buycount = EuctOrder::where('ORDER_TYPE', 'BUY')
+      ->where('STATUS', 'AD')->count();
+    $transfercount = EuctOrder::where('ORDER_TYPE', 'TRANSFER')
+      ->where('STATUS', 'AD')->count();
+
+    $retval = [
+      'RETURN' => $returncount,
+      'BUY' => $buycount,
+      'TRANSFER' => $transfercount
+    ];
+
+    return $this->respond_json(200, 'Pending Order Summary', $retval);
+  }
+
   function getEmail($staffid){
     if(config('mail.doiwanttosend')){
       // get the email address from ldap

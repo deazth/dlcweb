@@ -67,5 +67,6 @@ $api->version('v1', function ($api) {
     $api->post('/OrderCollectDevice', ['uses' => 'App\Api\V1\Controllers\OrderController@OrderCollectDevice']);
     $api->post('/OrderAddAttachment', ['uses' => 'App\Api\V1\Controllers\OrderController@addAttachment']);
     $api->get('/OrderGetAttachment', ['uses' => 'App\Api\V1\Controllers\OrderController@getAttachment']);
+    $api->get('/OrderGetSummary', ['uses' => 'App\Api\V1\Controllers\AdminController@getSummary']);
 
 });
