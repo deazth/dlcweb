@@ -81,13 +81,16 @@ TRANSFER
       $input = app('request')->all();
       $rules = [
         'ORDER_ID' => ['required'],
-        'FILE' => ['required']
+        'FILE' => ['required'],
+        'TYPE' => ['required']
       ];
 
       $validator = app('validator')->make($input, $rules);
       if($validator->fails()){
         return $this->respond_json(412, 'Invalid input', $input);
       }
+
+      $atttype = $req->TYPE . '_PATH';
 
       // find the order
       $theorder = EuctOrder::where('id', $req->ORDER_ID)->first();
@@ -97,7 +100,13 @@ TRANSFER
 
         // append the path back to the order
         $rem = json_decode($theorder->ORD_REMARK, TRUE);
-        $rem['REPORT_PATH'] = $fpath;
+
+        // delete old file if exist
+        if(isset($rem[$atttype])){
+          \Storage::delete($rem[$atttype]);
+        }
+
+        $rem[$atttype] = $fpath;
         $theorder->ORD_REMARK = json_encode($rem);
         $theorder->save();
 
@@ -112,7 +121,8 @@ TRANSFER
     function getAttachment(Request $req){
       $input = app('request')->all();
       $rules = [
-        'ORDER_ID' => ['required']
+        'ORDER_ID' => ['required'],
+        'TYPE' => ['required']
       ];
 
       $validator = app('validator')->make($input, $rules);
@@ -120,21 +130,22 @@ TRANSFER
         return $this->respond_json(412, 'Invalid input', $input);
       }
 
+      $atttype = $req->TYPE . '_PATH';
+
       $theorder = EuctOrder::find($req->ORDER_ID);
       if($theorder){
         // append the path back to the order
         $rem = json_decode($theorder->ORD_REMARK, TRUE);
-        if(isset($rem['REPORT_PATH'])){
+        if(isset($rem[$atttype])){
 
           // build up better output filename
           // first get the extension
-          $outfilename = $theorder->ORDER_NO . substr($rem['REPORT_PATH'], strrpos($rem['REPORT_PATH'], '.'));
+          $outfilename = $theorder->ORDER_NO . '_' . $req->TYPE . substr($rem[$atttype], strrpos($rem[$atttype], '.'));
 
-          return \Storage::download($rem['REPORT_PATH'], $outfilename);
+          return \Storage::download($rem[$atttype], $outfilename);
         } else {
-          return $this->respond_json(404, 'No attachment for this order', ['ORDER_ID' => $req->ORDER_ID]);
+          return $this->respond_json(404, 'No ' . $req->TYPE . ' attachment for this order', ['ORDER_ID' => $req->ORDER_ID]);
         }
-        return $this->respond_json(200, 'uploaded', $this->translateOrder($theorder));
 
       } else {
         return $this->respond_json(404, 'Order not found', ['ORDER_ID' => $req->ORDER_ID]);
