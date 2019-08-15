@@ -52,6 +52,8 @@ $api->version('v1', function ($api) {
     $api->get('/OrderPendingDC', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderPendingDC']);
     $api->post('/OrderReceivePayment', ['uses' => 'App\Api\V1\Controllers\AdminController@OrderReceivePayment']);
 
+    $api->post('/DeviceDirectInactive', ['uses' => 'App\Api\V1\Controllers\DeviceController@directInactiveDevice']);
+
     // BC management
     $api->post('/BcCreate', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);
     $api->post('/BcEdit', ['uses' => 'App\Api\V1\Controllers\BcController@createBc']);

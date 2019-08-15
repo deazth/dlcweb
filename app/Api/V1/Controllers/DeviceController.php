@@ -7,6 +7,7 @@ use App\Dlcm;
 use App\Plcm;
 use App\EuctOrder;
 use App\EuctBc;
+use App\BulkInactive;
 use \DateTime;
 use \DateTimeZone;
 use \DB;
@@ -529,6 +530,63 @@ class DeviceController extends Controller
         'DLCM1' => $this->getDeviceStatusforDlcm('1'),
         'DLCM2' => $this->getDeviceStatusforDlcm('2')
       ];
+    }
+
+    function directInactiveDevice(Request $req){
+      $input = app('request')->all();
+  		$rules = [
+  			'A_STAFF_ID' => ['required'],
+        'SERIAL_NO' => ['required'],
+        'TAG_NO' => ['required']
+  		];
+
+  		$validator = app('validator')->make($input, $rules);
+  		if($validator->fails()){
+  			return $this->respond_json(412, 'Invalid input', $input);
+  		}
+
+      // first, create the bulk inactive object
+      $bulki = new BulkInactive;
+      $bulki->A_STAFF_ID = $req->A_STAFF_ID;
+      $bulki->SERIAL_NO = $req->SERIAL_NO;
+      $bulki->TAG_NO = $req->TAG_NO;
+      $bulki->DEVICE_TYPE = 'DLCM';
+      $bulki->save();
+
+      // find the device
+      $device = Dlcm::where('TAG_NO', $req->TAG_NO)
+        ->where('SERIAL_NO', $req->SERIAL_NO)
+        ->first();
+      $retcode = 200;
+      $msg = 'Success';
+      $status = 'S';
+
+      if($device){
+
+        $bulki->DEVICE_ID = $device->id;
+
+        if($device->STATUS == 'ACTIVE'){
+          $device->STATUS = 'INACTIVE';
+          $device->DETAILS_STATUS = 'BULK INACTIVE';
+          $device->ACTUAL_STATUS = 'ADMIN: ' . $req->A_STAFF_ID;
+          $device->save();
+        } else {
+          $msg = 'Device tagged as ' . $device->STATUS;
+          $status = 'P';
+          $retcode = 401;
+        }
+
+      } else {
+        $status = 'F';
+        $retcode = 404;
+        $msg = 'Not Found';
+      }
+
+      $bulki->STATUS = $status;
+      $bulki->save();
+
+      return $this->respond_json($retcode, $msg, $bulki);
+
     }
 
 
